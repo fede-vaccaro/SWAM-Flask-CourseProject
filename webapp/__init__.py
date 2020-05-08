@@ -10,11 +10,11 @@ def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
 
-    from .api.controllers import api_blueprints
-
     db.init_app(app)
     migrate.init_app(app, db)
 
-    app.register_blueprint(api_blueprints)
+    from .api import create_module as api_create_module
+
+    api_create_module(app)
 
     return app

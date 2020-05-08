@@ -1,17 +1,8 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from config import DevConfig
+import os
+from webapp import create_app
 
-app = Flask(__name__)
-app.config.from_object(DevConfig)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-@app.route('/')
-def home():
-    return '<h1>Hello World!</h1>'
-
+env = os.environ.get('WEBAPP_ENV', 'dev')
+app = create_app('config.%sConfig' % env.capitalize())
 
 if __name__ == '__main__':
     app.run()

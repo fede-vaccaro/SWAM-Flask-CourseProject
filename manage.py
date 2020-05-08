@@ -1,7 +1,13 @@
+import os
+
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
-from main import app, db, migrate
-from models import User, Ticket, Item
+
+from webapp import create_app, db, migrate
+from webapp.api.models import User, Ticket, Item
+
+env = os.environ.get('WEBAPP_ENV', 'dev')
+app = create_app('config.%sConfig' % env.capitalize())
 
 
 @app.shell_context_processor

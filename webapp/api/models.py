@@ -21,7 +21,7 @@ class Ticket(db.Model):
     timestamp = db.Column(db.DateTime(), default=datetime.now)
     price = db.Column(db.Float())
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id'))
-    items = db.relationship('Item', backref='tickets', lazy='dynamic')
+    items = db.relationship('Item', backref='tickets', lazy='dynamic', cascade='save-update, delete')
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)

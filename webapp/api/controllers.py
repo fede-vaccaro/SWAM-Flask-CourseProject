@@ -1,19 +1,15 @@
 from flask import jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from flask_restful import Resource, fields, marshal_with, reqparse
+from flask_jwt_extended import create_access_token, jwt_required
+from flask_restful import Resource, marshal_with, reqparse
 from sqlalchemy.exc import IntegrityError
 from werkzeug import exceptions as exc
 
 from . import status
-from .models import User, Item
+from .models import User
 from .services import UserService, TicketService
 from .. import db
+from . import fields as fields
 
-user_fields = {
-    User.id.key: fields.Integer(),
-    User.username.key: fields.String(),
-    'uri': fields.Url(endpoint='api.userapi', absolute=True)
-}
 
 
 def noAuth():
@@ -24,11 +20,11 @@ class UserListAPI(Resource):
     resource_path = '/users/'
 
     @jwt_required
-    @marshal_with(user_fields)
+    @marshal_with(fields.user_fields)
     def get(self):
         return User.query.all(), status.HTTP_200_OK
 
-    @marshal_with(user_fields)
+    @marshal_with(fields.user_fields)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument(User.username.key, type=str, required=True, help='You have to include the username!')
@@ -87,18 +83,17 @@ class UserAPI(Resource):
     def get(self):
         pass
 
-item_fields = {
-    'name':fields.String(),
-}
 
 def print_item(item):
     for key in item.keys():
         print('k: {}, v: {}'.format(key, item[key]))
 
+
 class TicketAPI(Resource):
     resource_path = '/tickets/'
 
     @jwt_required
+    @marshal_with(fields.ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
@@ -107,7 +102,11 @@ class TicketAPI(Resource):
 
         items = args['items']
 
-        TicketService.save_ticket(items)
+        new_ticket = TicketService.save_ticket(items)
+        return new_ticket
 
-
-
+    @jwt_required
+    @marshal_with(fields.ticket_fields)
+    def get(self):
+        tickets = TicketService.get_logged_user_tickets()
+        return tickets

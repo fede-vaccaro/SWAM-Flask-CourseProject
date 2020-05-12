@@ -21,6 +21,12 @@ small_ticket_fields = {
     'uri': fields.Url(endpoint='api.ticketapi', absolute=True)
 }
 
+small_items_ticket_fields = {
+    Ticket.id.key: fields.Integer(),
+    Ticket.timestamp.key: fields.DateTime(),
+    'items': fields.List(fields.Nested(item_fields)),
+}
+
 small_accounting_fields = {
     Accounting.id.key: fields.Integer(),
     Accounting.totalPrice.key: fields.Float(),
@@ -33,7 +39,7 @@ accounting_fields = {
     Accounting.id.key: fields.Integer(),
     Accounting.totalPrice.key: fields.Float(),
     Accounting.paidPrice.key: fields.Float(),
-    'ticketRef': fields.Nested(small_ticket_fields),
+    'ticketRef': fields.Nested(small_items_ticket_fields),
     'userFrom': fields.Nested(user_fields),
     'userTo': fields.Nested(user_fields),
 }

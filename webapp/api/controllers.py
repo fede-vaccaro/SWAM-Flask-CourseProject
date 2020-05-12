@@ -89,7 +89,7 @@ class TicketsAPI(Resource):
     resource_path = '/tickets/'
 
     @jwt_required
-    @marshal_with(fields.small_ticket_fields)
+    @marshal_with(fields.ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
@@ -114,7 +114,7 @@ class DebtsAPI(Resource):
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self):
-        accountings = AccountingService.get_all_debt_accountings()
+        accountings = AccountingService.get_all_debts_accountings()
         return accountings
 
 
@@ -144,6 +144,23 @@ class TicketAPI(Resource):
             if user_id == accounting.user_from or user_id == accounting.user_to:
                 return ticket, status.HTTP_200_OK
         raise exc.Unauthorized
+
+    @marshal_with(fields.ticket_fields)
+    @jwt_required
+    def patch(self, id):
+        ticket = Ticket.query.get(id)
+        if not ticket:
+            raise exc.NotFound
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
+
+        args = parser.parse_args()
+
+        items = args['items']
+
+        updated_ticket = TicketService.update_ticket(ticket, items)
+        return updated_ticket
 
     @jwt_required
     def delete(self, id):

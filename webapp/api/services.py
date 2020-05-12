@@ -96,7 +96,10 @@ class TicketService:
         new_item_list = []
         for item in item_dicts:
             new_item = Item()
-            new_item.name = item['name']
+            try:
+                new_item.name = item['name']
+            except:
+                raise TicketInputError('One item has no name.')
 
             try:
                 new_item.quantity = item['quantity']
@@ -106,7 +109,7 @@ class TicketService:
             try:
                 new_item.price = float(item['price'])
             except:
-                new_item.price = 1.0
+                raise TicketInputError('Item {} has no price specified.'.format(item))
 
 
             n_participants = len(item['participants'])

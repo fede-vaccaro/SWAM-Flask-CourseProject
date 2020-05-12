@@ -6,7 +6,7 @@ from .. import db
 
 class TicketService:
     @staticmethod
-    def save_ticket(items):
+    def add_ticket(items):
         ticket = Ticket()
         accountings = {}
 
@@ -22,7 +22,7 @@ class TicketService:
             try:
                 new_item.price = float(item['price'])
             except:
-                new_item.price = 3.0
+                new_item.price = 1.0
 
             price_pro_capite = new_item.price / len(item['participants'])
 
@@ -57,6 +57,10 @@ class TicketService:
         return ticket
 
     @staticmethod
+    def update_ticket(items):
+        pass
+
+    @staticmethod
     def get_logged_user_tickets():
         current_user = User.query.get(get_jwt_identity())
         accountings = Accounting.query.filter_by(user_from=current_user.id).all()
@@ -87,3 +91,26 @@ class UserService:
     @staticmethod
     def get_logged_user():
         return User.query.get(get_jwt_identity())
+
+    @staticmethod
+    def add_user(username, password):
+        new_user = User(username=username)
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return new_user
+
+
+class AccountingService:
+
+    @staticmethod
+    def get_all_debt_accountings():
+        logged_user = UserService.get_logged_user()
+        return Accounting.query.filter_by(user_to=logged_user.id).all()
+
+    @staticmethod
+    def get_all_credit_accountings():
+        logged_user = UserService.get_logged_user()
+        return Accounting.query.filter_by(user_from=logged_user.id).all()

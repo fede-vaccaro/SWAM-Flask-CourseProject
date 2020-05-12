@@ -7,7 +7,7 @@ from werkzeug import exceptions as exc
 from . import fields as fields
 from . import status
 from .models import User, Ticket
-from .services import UserService, TicketService
+from .services import UserService, TicketService, AccountingService
 from .. import db
 
 
@@ -34,12 +34,8 @@ class UserListAPI(Resource):
         username = args[User.username.key]
         password = args[User.password.key]
 
-        new_user = User(username=username)
-        new_user.set_password(password)
-
         try:
-            db.session.add(new_user)
-            db.session.commit()
+            new_user = UserService.add_user(username, password)
         except IntegrityError as error:
             db.session.rollback()
 
@@ -102,7 +98,7 @@ class TicketsAPI(Resource):
 
         items = args['items']
 
-        new_ticket = TicketService.save_ticket(items)
+        new_ticket = TicketService.add_ticket(items)
         return new_ticket
 
     @jwt_required
@@ -112,10 +108,30 @@ class TicketsAPI(Resource):
         return tickets
 
 
+class DebtsAPI(Resource):
+    resource_path = '/debts/'
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_all_debt_accountings()
+        return accountings
+
+
+class CreditsAPI(Resource):
+    resource_path = '/credits/'
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_all_credits_accountings()
+        return accountings
+
+
 class TicketAPI(Resource):
     resource_path = '/tickets/<int:id>'
 
-    @marshal_with(fields.complete_ticket_fields)
+    @marshal_with(fields.ticket_fields)
     @jwt_required
     def get(self, id):
         ticket = Ticket.query.get(id)

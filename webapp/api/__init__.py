@@ -1,7 +1,7 @@
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from flask import Blueprint
-from .controllers import AuthenticationAPI, UserListAPI, UserAPI, TicketsAPI, TicketAPI
+from .controllers import AuthenticationAPI, UserListAPI, UserAPI, TicketsAPI, TicketAPI, DebtsAPI, CreditsAPI
 
 blueprint_api = Blueprint(
     'api',
@@ -24,4 +24,6 @@ def create_module(app):
     rest_api.add_resource(UserAPI, UserAPI.resource_path, endpoint='userapi')
     rest_api.add_resource(TicketsAPI, TicketsAPI.resource_path)
     rest_api.add_resource(TicketAPI, TicketAPI.resource_path, endpoint='ticketapi')
+    rest_api.add_resource(DebtsAPI, DebtsAPI.resource_path)
+    rest_api.add_resource(CreditsAPI, CreditsAPI.resource_path)
 

@@ -1,5 +1,6 @@
 from flask_jwt_extended import get_jwt_identity
 
+from .exceptions import TicketInputError
 from .models import User, Item, Ticket, Accounting
 from .. import db
 
@@ -107,7 +108,11 @@ class TicketService:
             except:
                 new_item.price = 1.0
 
-            price_pro_capite = new_item.price / len(item['participants'])
+
+            n_participants = len(item['participants'])
+            if n_participants == 0:
+                raise TicketInputError("Item {} has no participants.".format(item))
+            price_pro_capite = new_item.price / n_participants
 
             # set participants
             for participant_name in item['participants']:
@@ -118,6 +123,8 @@ class TicketService:
                         accountings[participant] += price_pro_capite
                     else:
                         accountings[participant] = price_pro_capite
+                else:
+                    raise TicketInputError("User '{}' does not exist.".format(participant_name))
 
             new_item_list.append(new_item)
 

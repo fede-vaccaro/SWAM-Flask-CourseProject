@@ -41,6 +41,7 @@ class Accounting(db.Model):
     user_from = db.Column(db.Integer(), db.ForeignKey('users.id'))
     user_to = db.Column(db.Integer(), db.ForeignKey('users.id'))
 
+    userTo = db.relationship('User', backref='user_to', foreign_keys=user_to)
 
 class Item(db.Model):
     __tablename__ = 'items'

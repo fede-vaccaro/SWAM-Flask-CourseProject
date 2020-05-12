@@ -24,7 +24,7 @@ class TicketService:
             except:
                 new_item.price = 3.0
 
-            price_pro_capite = new_item.price/len(item['participants'])
+            price_pro_capite = new_item.price / len(item['participants'])
 
             # set participants
             for participant_name in item['participants']:
@@ -56,7 +56,6 @@ class TicketService:
 
         return ticket
 
-
     @staticmethod
     def get_logged_user_tickets():
         current_user = User.query.get(get_jwt_identity())
@@ -66,6 +65,12 @@ class TicketService:
             ticket_set.add(accounting.ticket)
         tickets = Ticket.query.filter(Ticket.id.in_(ticket_set)).order_by(Ticket.timestamp.desc()).all()
         return tickets
+
+    @staticmethod
+    def delete_ticket(ticket):
+        db.session.delete(ticket)
+        db.session.commit()
+
 
 class UserService:
 
@@ -78,3 +83,7 @@ class UserService:
         if not user.check_password(password):
             return None
         return user
+
+    @staticmethod
+    def get_logged_user():
+        return User.query.get(get_jwt_identity())

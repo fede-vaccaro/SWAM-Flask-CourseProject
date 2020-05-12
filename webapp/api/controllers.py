@@ -1,15 +1,14 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, marshal_with, reqparse
 from sqlalchemy.exc import IntegrityError
 from werkzeug import exceptions as exc
 
+from . import fields as fields
 from . import status
-from .models import User
+from .models import User, Ticket
 from .services import UserService, TicketService
 from .. import db
-from . import fields as fields
-
 
 
 def noAuth():
@@ -58,6 +57,11 @@ class AuthenticationAPI(Resource):
     resource_path = '/auth'
 
     def post(self):
+        if not request.content_type == 'application/json':
+            response = jsonify(message="Content Type is not 'application/json'")
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            return response
+
         parser = reqparse.RequestParser()
         parser.add_argument(User.username.key, type=str, required=True, help='Username missing')
         parser.add_argument(User.password.key, type=str, required=True, help='Password missing')
@@ -80,20 +84,16 @@ class AuthenticationAPI(Resource):
 class UserAPI(Resource):
     resource_path = '/users/<int:id>'
 
+    @jwt_required
     def get(self):
         pass
 
 
-def print_item(item):
-    for key in item.keys():
-        print('k: {}, v: {}'.format(key, item[key]))
-
-
-class TicketAPI(Resource):
+class TicketsAPI(Resource):
     resource_path = '/tickets/'
 
     @jwt_required
-    @marshal_with(fields.ticket_fields)
+    @marshal_with(fields.small_ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
@@ -106,7 +106,39 @@ class TicketAPI(Resource):
         return new_ticket
 
     @jwt_required
-    @marshal_with(fields.ticket_fields)
+    @marshal_with(fields.small_ticket_fields)
     def get(self):
         tickets = TicketService.get_logged_user_tickets()
         return tickets
+
+
+class TicketAPI(Resource):
+    resource_path = '/tickets/<int:id>'
+
+    @marshal_with(fields.complete_ticket_fields)
+    @jwt_required
+    def get(self, id):
+        ticket = Ticket.query.get(id)
+
+        if not ticket:
+            raise exc.NotFound
+
+        for accounting in ticket.accountings:
+            user_id = UserService.get_logged_user().id
+            if user_id == accounting.user_from or user_id == accounting.user_to:
+                return ticket, status.HTTP_200_OK
+        raise exc.Unauthorized
+
+    @jwt_required
+    def delete(self, id):
+        ticket = Ticket.query.get(id)
+
+        if not ticket:
+            raise exc.NotFound
+
+        for accounting in ticket.accountings:
+            user_id = UserService.get_logged_user().id
+            if user_id == accounting.user_from:
+                TicketService.delete_ticket(ticket)
+                return status.HTTP_200_OK
+        raise exc.Unauthorized

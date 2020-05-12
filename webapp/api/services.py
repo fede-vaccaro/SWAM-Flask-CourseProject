@@ -101,7 +101,7 @@ class TicketService:
             try:
                 new_item.quantity = item['quantity']
             except:
-                pass
+                new_item.quantity = 1
 
             try:
                 new_item.price = float(item['price'])
@@ -112,7 +112,7 @@ class TicketService:
             n_participants = len(item['participants'])
             if n_participants == 0:
                 raise TicketInputError("Item {} has no participants.".format(item))
-            price_pro_capite = new_item.price / n_participants
+            price_pro_capite = new_item.price * new_item.quantity / n_participants
 
             # set participants
             for participant_name in item['participants']:

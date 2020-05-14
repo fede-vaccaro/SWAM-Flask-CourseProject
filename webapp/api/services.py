@@ -70,7 +70,8 @@ class TicketService:
                     refund = Item(name="Refund ticket update", price=accounting.paidPrice - accounting.totalPrice)
                     refund.participants.append(UserService.get_logged_user())
 
-                    refund_accounting = Accounting(totalPrice=refund.price, user_from=user, user_to=UserService.get_logged_user().id)
+                    refund_accounting = Accounting(totalPrice=refund.price, user_from=user,
+                                                   user_to=UserService.get_logged_user().id)
 
                     refund_ticket.items.append(refund)
                     refund_ticket.accountings.append(refund_accounting)
@@ -111,7 +112,6 @@ class TicketService:
             except:
                 raise TicketInputError('Item {} has no price specified.'.format(item))
 
-
             n_participants = len(item['participants'])
             if n_participants == 0:
                 raise TicketInputError("Item {} has no participants.".format(item))
@@ -132,9 +132,8 @@ class TicketService:
             new_item_list.append(new_item)
 
         new_accountings_list = []
-        current_user = User.query.get(get_jwt_identity())
+        current_user = UserService.get_logged_user()
         for participant in accountings.keys():
-            print(participant)
             new_accounting = Accounting()
 
             new_accounting.user_from = current_user.id
@@ -148,7 +147,7 @@ class TicketService:
 
     @staticmethod
     def get_logged_user_tickets():
-        current_user = User.query.get(get_jwt_identity())
+        current_user = UserService.get_logged_user()
         accountings = Accounting.query.filter_by(user_from=current_user.id).all()
         ticket_set = set()
         for accounting in accountings:
@@ -170,7 +169,8 @@ class UserService:
         if not user:
             return None
         # Do the passwords match
-        if not user.check_password(password):
+        check_password = user.check_password(password)
+        if not check_password:
             return None
         return user
 

@@ -48,7 +48,7 @@ class TicketService:
                 if user in old_accountings_dict.keys():
                     new_accountings_dict[user].paidPrice = old_accountings_dict[user].paidPrice
 
-                    # check if any old accountings no more exists
+            # check if any old accountings no more exists
             # eventually, it creates a new accounting with totalPrice equal to 0 while conserving paidPrice
             for user in old_accountings_dict.keys():
                 if user not in new_accountings_dict.keys() and old_accountings_dict[user].paidPrice > 0.0:

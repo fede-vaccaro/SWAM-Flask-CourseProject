@@ -73,6 +73,10 @@ class Item(db.Model):
                                    backref=db.backref('items', lazy='dynamic')
                                    )
 
+    def add_participants(self, *participants):
+        for participant in participants:
+            self.participants.append(participant)
+
     def __eq__(self, other):
         return (self.name == other.name and
                 self.price == other.price and

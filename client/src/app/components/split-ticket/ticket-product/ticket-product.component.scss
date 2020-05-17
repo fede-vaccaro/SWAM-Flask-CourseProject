@@ -1,0 +1,31 @@
+.ion-fab-button-true {
+  color: black;
+  font-size: 10px;  }
+
+.ion-fab-button-false {
+  color: grey;
+  font-size: 10px;  
+}
+
+.edit-row {
+  // color: #777777;
+  background: #c5c5c5;
+  border-width: medium;
+  border-style: solid;
+  font-size: medium;
+  font-style: italic;
+  font-family: "Monospace";
+  font-weight: bold;
+}
+
+ion-col {
+  text-align: center;
+  align-items: center;
+}
+
+.items {
+  display: flex;
+  //align-content: center !important;
+  //align-items: center !important;
+  text-align: center;
+}

@@ -1,0 +1,54 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Paid tickets</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngFor="let paidTicket of paidTickets">
+      <ion-col>
+        <ion-card (click)="selectTicket(paidTicket)">
+          <ion-card-header>
+            <ion-card-title
+              >Ticket {{ getDate(paidTicket.timestamp) }}
+            </ion-card-title>
+            <ion-card-subtitle
+              >Owner: {{ paidTicket.owner.name }}
+            </ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div slot="end">
+              <!-- //TODO paidTicket.paidPrice -->
+              <ion-text>Paid: {{ paidTicket.totalPrice }}</ion-text>
+            </div>
+
+            <app-expandable
+              [expanded]="selectedTicketTimestamp === paidTicket.timestamp"
+            >
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="5">Name</ion-col>
+                  <ion-col size="4">Quantity</ion-col>
+                  <ion-col size="3">Price</ion-col>
+                </ion-row>
+              </ion-grid>
+              <ion-grid *ngFor="let product of paidTicket.products">
+                <app-ticket-product
+                  style="margin-left: 3%;"
+                  [product]="product"
+                  [participants]="getArray(paidTicket.participant)"
+                  [viewMode]="true"
+                ></app-ticket-product>
+              </ion-grid>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

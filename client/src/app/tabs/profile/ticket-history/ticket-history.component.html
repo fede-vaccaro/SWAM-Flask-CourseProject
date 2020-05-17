@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Profile - Ticket history
+    </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-segment
+    (ionChange)="statusChanged($event.detail.value)"
+    [value]="ticketStatus"
+  >
+    <ion-segment-button value="active">
+      <ion-label>Active</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="passed">
+      <ion-label>Passed</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-item *ngIf="ticketHistory === undefined">
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  </ion-item>
+
+  <div *ngIf="(ticketHistoryObs | async) && ticketStatus === 'active'">
+    <ion-list>
+      <ion-item
+        *ngFor="let ticket of ticketHistory"
+        (click)="viewTicket(ticket)"
+      >
+        <app-ticket-preview [ticket]="ticket"></app-ticket-preview>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="ticketStatus === 'passed' && (passedTicketHistoryObs | async)">
+    <ion-list>
+      <ion-item
+        *ngFor="let ticket of passedTicketHistory"
+        (click)="viewTicket(ticket)"
+      >
+        <app-ticket-preview [ticket]="ticket"></app-ticket-preview>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Your status</ion-title>
+    <div
+      style="padding-right: 4%;"
+      slot="end"
+      (click)="presentNotificationPopover($event)"
+    >
+      <ion-fab-button style="z-index: 1;">
+        <ion-icon name="notifications-outline" size="large"></ion-icon>
+      </ion-fab-button>
+      <ion-badge color="danger" *ngIf="this.inboxMessagesObs | async"
+        ><span *ngIf="newMessages !== 0"
+          >{{ this.newMessages }}</span
+        ></ion-badge
+      >
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item *ngIf="userFriends === undefined">
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  </ion-item>
+
+  <ion-card *ngIf="this.noFriends">
+    <ion-card-content text-center>
+      <ion-card-title>You have no friends</ion-card-title>
+      <ion-label>To add new friends you can go in:<br /></ion-label>
+      <ion-label>Profile -> Friends -> Add friend<br /></ion-label>
+      <ion-button color="dark" routerLink="/tabs/profile/friends-list"
+        >Go</ion-button
+      >
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="userFriendsObs | async">
+    <ion-list>
+      <ion-card *ngFor="let friend of userFriends.friends; index as index"
+      (click)="goToFriendTicket(index)">
+        <ion-item
+          button
+        >
+          <ion-avatar item-start>
+            <ion-img [src]="friend.photoUrl"></ion-img>
+          </ion-avatar>
+          <ion-item style="--ion-border-color: transparent;"
+            >{{ friend.name }}</ion-item
+          >
+          <ion-list slot="end">
+            <ion-text color="danger">
+              Debt: -{{ debts[friend.email] }}€<br />
+            </ion-text>
+            <ion-text color="success">
+              Credit: +{{ credits[friend.email] }}€<br />
+            </ion-text>
+            <ion-text>
+              Total = {{ total[friend.email] }}€
+            </ion-text>
+          </ion-list>
+        </ion-item>
+      </ion-card>
+    </ion-list>
+  </div>
+</ion-content>

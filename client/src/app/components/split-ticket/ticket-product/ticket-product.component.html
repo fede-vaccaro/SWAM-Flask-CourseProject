@@ -1,0 +1,89 @@
+<ion-row *ngIf="!selected">
+  <ion-col [size]="!viewMode ? 4 : 4">{{ product.name }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 4">{{ product.quantity }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 4">{{ product.price }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 0">
+    <ion-fab-button
+      color="dark"
+      [hidden]="viewMode"
+      (click)="openSelect()"
+      *ngIf="product.participants !== undefined"
+    >
+      <ion-icon
+        size="large"
+        [name]="
+          product.participants[0] !== undefined ? 'person' : 'person-outline'
+        "
+      ></ion-icon>
+    </ion-fab-button>
+    <ion-select
+      [compareWith]="compareUser"
+      [hidden]="true"
+      #mySelect
+      multiple="true"
+      cancelText="Nah"
+      okText="Okay!"
+      [value]="product.participants"
+      [(ngModel)]="product.participants"
+    >
+      <ion-select-option
+        color="dark"
+        *ngFor="let participant of participants; index as i"
+        [value]="participant"
+      >
+        {{ participant.name }}
+      </ion-select-option>
+    </ion-select>
+    <ion-fab-button
+      color="dark"
+      [hidden]="!viewMode"
+      *ngIf="product.participants !== undefined"
+    >
+      <ion-icon
+        size="large"
+        [name]="
+          product.participants[0] !== undefined ? 'person' : 'person-outline'
+        "
+        (click)="presentPopover($event, product.participants)"
+      ></ion-icon>
+    </ion-fab-button>
+  </ion-col>
+  <ion-col size="2" *ngIf="!this.viewMode">
+    <ion-fab-button class="avatar" expand="block" color="dark">
+      <ion-icon (click)="select()" name="brush" size="large"></ion-icon>
+    </ion-fab-button>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="selected" class="selected-card">
+  <ion-col>
+    <ion-input
+      [(ngModel)]="product.name"
+      placeholder="name"
+      type="text"
+    ></ion-input>
+  </ion-col>
+  <ion-col>
+    <ion-input
+      [ngModel]="product.quantity"
+      placeholder="quantity"
+      type="number"
+    ></ion-input>
+  </ion-col>
+  <ion-col>
+    <ion-input
+      [(ngModel)]="product.price"
+      placeholder="price"
+      type="number "
+    ></ion-input>
+  </ion-col>
+  <ion-col>
+    <ion-fab-button expand="block" color="dark">
+      <ion-icon name="trash" (click)="deleteProduct()" size="large"></ion-icon>
+    </ion-fab-button>
+  </ion-col>
+  <ion-col>
+    <ion-fab-button class="avatar" expand="block" color="dark">
+      <ion-icon name="save" (click)="select()" size="large"></ion-icon>
+    </ion-fab-button>
+  </ion-col>
+</ion-row>

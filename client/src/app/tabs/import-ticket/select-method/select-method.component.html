@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Select method
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-grid
+  ><ion-row>
+    <ion-col size="6" *ngFor="let method of methods">
+      <ion-card
+        (click)="updateMethod(method)"
+        [ngClass]="isSelected(method) ? 'selected-card' : 'unselected-card'"
+      >
+        <ion-card-content text-center >
+          <ion-img class="avatar" [src]="method.icon"></ion-img>
+          <ion-card-title>
+            {{ method.name }}
+          </ion-card-title>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

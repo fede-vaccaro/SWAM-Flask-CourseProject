@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Profile
+    </ion-title>
+    <ion-toggle slot="end" (ionChange)="enableDark($event)" [checked]='checked'></ion-toggle>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-item>
+    <ion-avatar>
+      <ion-img [src]="user.photoUrl"></ion-img>
+    </ion-avatar>
+    <ion-title>{{user.name}}</ion-title>
+  </ion-item>
+  <ion-list>
+    <ion-item>
+      <ion-label (click)="goToAddFriends()">Friends</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label (click)="goToMyTicket()">My tickets</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label (click)="goToPaidTicket()">Paid tickets</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label (click)="goToTicketHistory()">Ticket history</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-button expand="block" class="xc" (click)="logout()">LOGOUT</ion-button>
+</ion-footer>

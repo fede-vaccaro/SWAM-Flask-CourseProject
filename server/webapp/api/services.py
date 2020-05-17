@@ -102,7 +102,7 @@ class TicketService:
                 raise TicketInputError('One item has no name.')
 
             try:
-                new_item.quantity = item['quantity']
+                new_item.quantity = int( item['quantity'])
             except:
                 new_item.quantity = 1
 
@@ -119,7 +119,7 @@ class TicketService:
 
             # set participants
             for participant_name in item['participants']:
-                participant = User.query.filter_by(username=participant_name).first()
+                participant = User.query.filter_by(username=participant_name['username']).first()
                 if participant is not None:
                     new_item.participants.append(participant)
                     if participant in accountings.keys():
@@ -134,7 +134,6 @@ class TicketService:
         new_accountings_list = []
         current_user = User.query.get(get_jwt_identity())
         for participant in accountings.keys():
-            print(participant)
             new_accounting = Accounting()
 
             new_accounting.user_from = current_user.id

@@ -2,7 +2,7 @@
     <ion-toolbar>
         <div *ngIf="userFriendsObs | async">
             <ion-title *ngIf="selectedFriend">
-                <span>Tickets with: {{ selectedFriend.name }}</span>
+                <span>Tickets with: {{ selectedFriend.username }}</span>
             </ion-title>
         </div>
 

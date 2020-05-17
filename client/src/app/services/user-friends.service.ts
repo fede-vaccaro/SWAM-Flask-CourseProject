@@ -4,7 +4,10 @@ import { User } from '../models/user';
 import { UserFriends } from '../models/user-friends';
 import { UserFriendsRepositoryService } from '../repositories/user-friends-repository.service';
 import { UserRepositoryService } from '../repositories/user-repository.service';
-import { first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { UserFriendsPipe } from '../pipe/user-friends.pipe';
 
 @Injectable({
   providedIn: 'root'
@@ -12,23 +15,27 @@ import { first } from 'rxjs/operators';
 export class UserFriendsService {
 
   constructor(
+    private http: HttpClient,
     private userFriendsRepositoryService: UserFriendsRepositoryService,
     private userRepositoryService: UserRepositoryService,
+    private userFriendsPipe: UserFriendsPipe,
   ) {
   }
 
-  getUserFriends(userId: string): Observable<UserFriends> {
-    return this.userFriendsRepositoryService.getUserFriends(userId)
+  async getUserFriends(): Promise<UserFriends> {
+    return await this.http.get(`${environment.serverUrl}/users`)
+      .pipe(first(), map((userArray: any[]) => this.userFriendsPipe.transform(userArray)))
+      .toPromise()
   }
 
   async addFriend(userId: string, friendId: string, userFriends: UserFriends) {
-    let friend: User = await this.userRepositoryService.getUser(friendId)
-    let user: User = await this.userRepositoryService.getUser(userId)
-    let friendUserFriends = await this.getUserFriends(friendId).pipe(first()).toPromise()
-    userFriends.friends.push(friend)
-    friendUserFriends.friends.push(user)
-    this.userFriendsRepositoryService.updateUserFriends(userId, userFriends)
-    this.userFriendsRepositoryService.updateUserFriends(friendId, friendUserFriends)
+    // let friend: User = await this.userRepositoryService.getUser(friendId)
+    // let user: User = await this.userRepositoryService.getUser(userId)
+    // let friendUserFriends = await this.getUserFriends().pipe(first()).toPromise()
+    // userFriends.friends.push(friend)
+    // friendUserFriends.friends.push(user)
+    // this.userFriendsRepositoryService.updateUserFriends(userId, userFriends)
+    // this.userFriendsRepositoryService.updateUserFriends(friendId, friendUserFriends)
   }
 
   async removeFriend(userId: string, friend: User, userFriends: UserFriends) {

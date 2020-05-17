@@ -12,23 +12,18 @@ import { Observable } from 'rxjs';
   styleUrls: ['./select-participants.component.scss'],
 })
 export class SelectParticipantsComponent implements OnInit {
-  userFriendsObs: Observable<UserFriends>
   userFriends: UserFriends
   @Input()
   participants: User[]
 
   constructor(
     private userFriendsService: UserFriendsService,
-    private loginService: LoginService,
   ) {
   }
 
- async  ngOnInit() {
-    let loggedUserEmail = await (await this.loginService.getLoggedUser()).email
-    this.userFriendsObs = this.userFriendsService.getUserFriends(loggedUserEmail)
-    this.userFriendsObs.subscribe(userFriends => {
-      this.userFriends = userFriends
-    })
+  async ngOnInit() {
+    this.userFriends = await this.userFriendsService.getUserFriends()
+    console.log(this.userFriends)
   }
 
   updateParticipants(user: User) {

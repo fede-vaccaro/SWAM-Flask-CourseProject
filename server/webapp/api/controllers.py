@@ -86,7 +86,7 @@ class UserAPI(Resource):
 
 
 class TicketsAPI(Resource):
-    resource_path = '/tickets/'
+    resource_path = '/tickets'
 
     @jwt_required
     @marshal_with(fields.ticket_fields)
@@ -109,7 +109,7 @@ class TicketsAPI(Resource):
 
 
 class DebtsAPI(Resource):
-    resource_path = '/debts/'
+    resource_path = '/debts'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -119,7 +119,7 @@ class DebtsAPI(Resource):
 
 
 class CreditsAPI(Resource):
-    resource_path = '/credits/'
+    resource_path = '/credits'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -129,7 +129,7 @@ class CreditsAPI(Resource):
 
 
 class TicketAPI(Resource):
-    resource_path = '/tickets/<int:id>'
+    resource_path = '/ticket/<int:id>'
 
     @marshal_with(fields.ticket_fields)
     @jwt_required

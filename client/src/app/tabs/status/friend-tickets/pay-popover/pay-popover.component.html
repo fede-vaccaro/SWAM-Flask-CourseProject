@@ -1,7 +1,7 @@
 <!--<h3>YOU PAY!!!!!</h3>-->
 <!--<ion-img [src]="'https://cdn.corrieredellosport.it/images/2018/04/11/232225757-daa6d105-d3cc-4139-bef5-71817a98362f.jpg'"></ion-img>-->
 <div *ngIf="!showSpinner && !showSuccess">
-    <ion-header style="padding: 5%; text-align: center">Pay your debt to <b>{{ friend.name }}</b></ion-header>
+    <ion-header style="padding: 5%; text-align: center">Pay your debt to <b>{{ friend.username }}</b></ion-header>
     <ion-list style="padding-left: 5%">
         <ion-list-header lines="none">Summary:</ion-list-header>
         <ion-text color="danger">
@@ -31,5 +31,5 @@
 </div>
 
 <div *ngIf="showSuccess">
-    <ion-header style="padding: 40px;"><ion-text><b>All your debt to {{ friend.name }} are solved!</b></ion-text></ion-header>
+    <ion-header style="padding: 40px;"><ion-text><b>All your debt to {{ friend.username }} are solved!</b></ion-text></ion-header>
 </div>

@@ -13,7 +13,7 @@
             <ion-row *ngIf="ticketsByFriend.length === 0 && debtsSelected">
                 <ion-col>
                     <ion-card>
-                        <ion-card-header>{{ friend.name }} has no tickets with you!</ion-card-header>
+                        <ion-card-header>{{ friend.username }} has no tickets with you!</ion-card-header>
                     </ion-card>
                 </ion-col>
             </ion-row>
@@ -21,7 +21,7 @@
             <ion-row *ngIf="ticketsByMe.length === 0 && !debtsSelected">
                 <ion-col>
                     <ion-card>
-                        <ion-card-header>You have no tickets with {{ friend.name }}!</ion-card-header>
+                        <ion-card-header>You have no tickets with {{ friend.username }}!</ion-card-header>
                     </ion-card>
                 </ion-col>
             </ion-row>

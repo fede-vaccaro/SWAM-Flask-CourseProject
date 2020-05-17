@@ -1,7 +1,7 @@
 <ion-item>
   <ion-img [src]="getMarketIcon(ticket.market)"></ion-img>
   <ion-list>
-    <ion-label>Bougth by: {{ ticket.owner.name }}</ion-label>
+    <ion-label>Bougth by: {{ ticket.owner.username }}</ion-label>
     <ion-label>{{ getDate(ticket.timestamp) }}</ion-label>
     <ion-label>{{ ticket.totalPrice }} €</ion-label>
   </ion-list>

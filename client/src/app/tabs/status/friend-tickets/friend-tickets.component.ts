@@ -34,7 +34,7 @@ export class FriendTicketsComponent implements OnInit {
     displayedTotal: string;
 
     @ViewChildren('friendSlide') slideList: QueryList<FriendSlideComponent>;
-    @ViewChild(IonSlides, {static: false}) slides: IonSlides;
+    @ViewChild(IonSlides, { static: false }) slides: IonSlides;
 
     private debt: number;
     private credit: number;
@@ -48,16 +48,12 @@ export class FriendTicketsComponent implements OnInit {
 
     async ngOnInit() {
         try {
-            this.loggedUser = await this.loginService.getLoggedUser();
-
-            this.userFriendsObs = this.userFriendsService.getUserFriends(this.loggedUser.email);
-            this.userFriendsObs.subscribe(userFriends => {
-                if (userFriends !== undefined) {
-                    this.userFriends = userFriends;
-                } else {
-                    this.userFriends = {friends: []};
-                }
-            });
+            let userFriends = await this.userFriendsService.getUserFriends();
+            if (userFriends !== undefined) {
+                this.userFriends = userFriends;
+            } else {
+                this.userFriends = { friends: [] };
+            }
         } catch (e) {
             this.router.navigateByUrl('tabs/status');
         }
@@ -85,7 +81,7 @@ export class FriendTicketsComponent implements OnInit {
         const popover = await this.popoverController.create({
             component: PayPopoverComponent,
             event: ev,
-            componentProps: {total: this.total, debt: this.debt, credit: this.credit, friend: this.selectedFriend},
+            componentProps: { total: this.total, debt: this.debt, credit: this.credit, friend: this.selectedFriend },
             translucent: true,
         });
         return await popover.present();

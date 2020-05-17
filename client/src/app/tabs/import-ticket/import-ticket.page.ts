@@ -95,7 +95,6 @@ export class ImportTicketPage {
     this.loginService.getLoggedUser().then(owner => {
       ticket.owner = owner
       ticket.market = this.market
-      this.participants.push(ticket.owner)
       ticket.participants = this.participants
       ticket.timestamp = Date.now()
       ticket.id = Date.now().toString()

@@ -1,19 +1,16 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {User} from 'src/app/models/user';
-import {UserFriendsService} from 'src/app/services/user-friends.service';
-import {AccountingService} from '../../services/accounting.service';
-import {UserFriends} from 'src/app/models/user-friends';
-import {Observable} from 'rxjs';
-import {LoginService} from '../../services/login.service';
-import {Router} from '@angular/router';
-import {IonSlides, PopoverController} from '@ionic/angular';
-import {TicketService} from '../../services/ticket.service';
-import {DebtTicket} from '../../models/ticket';
-import {NotificationService} from '../../services/notification.service';
-import {PayPopoverComponent} from './friend-tickets/pay-popover/pay-popover.component';
-import {NotificationPopoverComponent} from './notification-popover/notification-popover.component';
-import {InboxMessage} from '../../models/inbox-message';
-import {MessagesRepositoryService} from '../../repositories/messages-repository.service';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { PopoverController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { User } from 'src/app/models/user';
+import { UserFriends } from 'src/app/models/user-friends';
+import { UserFriendsService } from 'src/app/services/user-friends.service';
+import { InboxMessage } from '../../models/inbox-message';
+import { DebtTicket } from '../../models/ticket';
+import { MessagesRepositoryService } from '../../repositories/messages-repository.service';
+import { LoginService } from '../../services/login.service';
+import { TicketService } from '../../services/ticket.service';
+import { NotificationPopoverComponent } from './notification-popover/notification-popover.component';
 
 
 @Component({
@@ -59,14 +56,9 @@ export class StatusPage implements OnInit {
         // federico.vaccaro@stud.unifi.it
         // palazzolo1995@gmail.com
         // this.user = {name: 'PALAZZOLO', email: 'palazzolo1995@gmail.com'};// await this.loginService.getLoggedUser();
-        this.user = await this.loginService.getLoggedUser();
-        this.userFriendsObs = this.userFriendsService.getUserFriends(this.user.email);
-        this.userFriendsObs.subscribe(async userFriends => {
-            if (userFriends !== undefined) {
-                this.userFriends = userFriends;
+        this.userFriends = await this.userFriendsService.getUserFriends();
+            if (this.userFriends !== undefined) {
                 for (const user of this.userFriends.friends) {
-
-
                     this.ticketsByFriendObs = await this.ticketService.getDebtTicketsOf(user);
                     this.ticketsByFriendObs.subscribe(tArr => {
                         this.debts[user.email] = 0.0;
@@ -90,7 +82,6 @@ export class StatusPage implements OnInit {
                 }
                 this.noFriends = this.userFriends.friends.length === 0;
             }
-        });
         this.inboxMessagesObs = await this.messagesRepositoryService.retrieveLoggedUserInbox();
         this.inboxMessagesObs.subscribe(mArr => {
             this.newMessages = 0;

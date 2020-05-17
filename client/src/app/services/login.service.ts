@@ -1,15 +1,12 @@
-import { Injectable, NgZone, EventEmitter, Output } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
+import { HttpClient } from '@angular/common/http';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { auth } from 'firebase';
-import { User } from '../models/user';
-import { GoogleLoggedUserPipe } from '../pipe/google-logged-user.pipe';
-import { UserRepositoryService } from '../repositories/user-repository.service';
-import { first, map } from 'rxjs/operators';
-import { UserFriendsRepositoryService } from '../repositories/user-friends-repository.service';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { User } from '../models/user';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,15 +19,8 @@ export class LoginService {
 
   constructor(
     private http: HttpClient,
-    private angularFireAuth: AngularFireAuth,
     private router: Router,
-    private ngZone: NgZone,
-    private userRepository: UserRepositoryService,
-    private userFriendRepository: UserFriendsRepositoryService,
-    private googleLoggedUserPipe: GoogleLoggedUserPipe,
   ) {
-    this.googleLoggedUserPipe = new GoogleLoggedUserPipe()
-
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -55,7 +45,7 @@ export class LoginService {
     this.router.navigate(['/login']);
   }
 
-  async getLoggedUser(): Promise<User> {
+  async getLoggedUser(): Promise<User> {//TODO remove this
     return this.currentUserSubject.value
   }
 

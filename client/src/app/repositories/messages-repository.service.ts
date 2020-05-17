@@ -20,8 +20,8 @@ export class MessagesRepositoryService {
     async sendMessageFromLoggedUser(to: User, content: string) {
         const loggedUser = await this.loginService.getLoggedUser();
         const message: InboxMessage = {
-            from: loggedUser.name,
-            to: to.name,
+            from: loggedUser.username,
+            to: to.username,
             content: content,
             displayed: false,
         };

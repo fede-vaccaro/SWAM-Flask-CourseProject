@@ -6,9 +6,14 @@
   </ion-toolbar>
 </ion-header>
 <ion-grid [fixed]="true">
-  <div *ngIf="userFriendsObs | async">
-    <ion-row >
-      <ion-col size="6" size-xs size-xm *ngFor="let user of userFriends.friends">
+  <div *ngIf="userFriends">
+    <ion-row>
+      <ion-col
+        size="6"
+        size-xs
+        size-xm
+        *ngFor="let user of userFriends.friends"
+      >
         <ion-card
           (click)="updateParticipants(user)"
           [ngClass]="isSelected(user) ? 'selected-card' : 'unselected-card'"
@@ -18,9 +23,9 @@
               <ion-img [src]="user.photoUrl"></ion-img>
             </ion-avatar>
             <ion-card-title>
-              {{ user.name.split(" ")[0] }}
+              {{ user.username.split(" ")[0] }}
               <ion-card-title> </ion-card-title>
-              {{ user.name.split(" ")[1] }}
+              {{ user.username.split(" ")[1] }}
             </ion-card-title>
           </ion-card-content>
         </ion-card>

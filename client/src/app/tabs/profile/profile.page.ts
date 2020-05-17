@@ -12,7 +12,7 @@ import { toggleDarkTheme } from 'src/util/utils';
 })
 export class ProfilePage {
   user: User = {
-    name: "",
+    username: "",
     photoUrl: "",
   }
 

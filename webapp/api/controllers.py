@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, marshal_with, reqparse
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import exceptions as exc
 
 from . import fields as fields
@@ -36,7 +36,7 @@ class UserListAPI(Resource):
 
         try:
             new_user = UserService.add_user(username, password)
-        except IntegrityError as error:
+        except SQLAlchemyError as error:
             db.session.rollback()
 
             if User.query.filter_by(username=username).first() is not None:
@@ -44,9 +44,9 @@ class UserListAPI(Resource):
 
             error = str(error.orig) + " for parameters" + str(error.params)
             print("An error occurred with the DB.", error)
-            raise exc.InternalServerError(str(error.orig))
+            raise exc.InternalServerError(str(error))
 
-        return new_user, status.HTTP_200_OK
+        return new_user, status.HTTP_201_CREATED
 
 
 class AuthenticationAPI(Resource):
@@ -92,14 +92,14 @@ class TicketsAPI(Resource):
     @marshal_with(fields.ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
+        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert a ticket with no items!")
 
         args = parser.parse_args()
 
         items = args['items']
 
         new_ticket = TicketService.add_ticket(items)
-        return new_ticket
+        return new_ticket, status.HTTP_201_CREATED
 
     @jwt_required
     @marshal_with(fields.small_ticket_fields)
@@ -160,7 +160,7 @@ class TicketAPI(Resource):
         items = args['items']
 
         updated_ticket = TicketService.update_ticket(ticket, items)
-        return updated_ticket
+        return updated_ticket, status.HTTP_201_CREATED
 
     @jwt_required
     def delete(self, id):

@@ -4,9 +4,20 @@ from unittest import mock
 from webapp import create_app, db, bcrypt
 from webapp.api.models import User, Ticket, Item, Accounting
 from webapp.api.services import UserService, TicketService
-
+from . import controllers as ctl
+import json
 
 class FlaskAppTest(unittest.TestCase):
+    content_type = {'Content-Type': 'application/json'}
+
+    def _get_token_and_add_user(self, username='test', password='pw'):
+        user = self._add_user(username, password)
+
+        response = self.client.post('api' + ctl.AuthenticationAPI.resource_path, headers=self.content_type,
+                                    data=self.encoder.encode({'username': username, 'password': password}))
+
+        json_response = json.loads(response.data)
+        return json_response['token'], user
 
     def setUp(self):
         app = create_app('config.TestConfig')

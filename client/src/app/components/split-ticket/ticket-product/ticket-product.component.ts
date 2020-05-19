@@ -38,13 +38,8 @@ export class TicketProductComponent implements OnInit {
 
   compareUser = (user1: User, users: User[]) => {
     if (Array.isArray(users)) {
-      return users.findIndex(user => user.email === user1.email) !== -1
+      return users.findIndex(user => user.id === user1.id) !== -1
     }
-    // else {
-    //   let userToCompare = user2 as User
-    //   console.log(userToCompare)
-    //   return user1.email === userToCompare.email
-    // }
   };
 
   select() {

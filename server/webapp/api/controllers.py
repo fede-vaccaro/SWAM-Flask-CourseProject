@@ -102,7 +102,7 @@ class TicketsAPI(Resource):
         return new_ticket
 
     @jwt_required
-    @marshal_with(fields.small_ticket_fields)
+    @marshal_with(fields.ticket_fields)
     def get(self):
         tickets = TicketService.get_logged_user_tickets()
         return tickets
@@ -125,6 +125,15 @@ class CreditsAPI(Resource):
     @marshal_with(fields.accounting_fields)
     def get(self):
         accountings = AccountingService.get_all_credits_accountings()
+        return accountings
+
+class CreditAPI(Resource):
+    resource_path = '/credit/<int:id>'
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accountings = AccountingService.get_credits_accountings_of(id)
         return accountings
 
 

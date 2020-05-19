@@ -26,8 +26,8 @@ export class TicketHistoryComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.ticketHistoryObs = await this.ticketService.getTicketsOfLoggedUser()
-    this.passedTicketHistoryObs = await this.ticketService.getPassedTicketsOfLoggedUser()
+    this.ticketHistoryObs = this.ticketService.getTicketsOfLoggedUser()
+    this.passedTicketHistoryObs = this.ticketService.getTicketsOfLoggedUser()//TODO
     this.ticketHistoryObs.subscribe(ticketHistory => this.ticketHistory = ticketHistory)
     this.passedTicketHistoryObs.subscribe(passedTicketHistory => this.passedTicketHistory = passedTicketHistory)
   }

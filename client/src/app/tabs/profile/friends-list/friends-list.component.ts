@@ -5,7 +5,7 @@ import { User } from 'src/app/models/user';
 import { UserFriends } from 'src/app/models/user-friends';
 import { UserFriendsService } from 'src/app/services/user-friends.service';
 import { AddFriendsPopoverComponent } from './add-friends-popover/add-friends-popover.component';
-import { LoginService } from '../../../services/login.service';
+import {LoginService} from '../../../services/login.service';
 
 @Component({
   selector: 'app-friends-list',
@@ -19,12 +19,17 @@ export class FriendsListComponent implements OnInit {
   constructor(
     private userFriendsService: UserFriendsService,
     private popoverController: PopoverController,
+    private loginService: LoginService,
     public toastController: ToastController,
   ) {
   }
 
   async ngOnInit() {
-    this.userFriends = await this.userFriendsService.getUserFriends()
+    this.loggedUserEmail = await (await this.loginService.getLoggedUser()).email
+    this.userFriendsObs = this.userFriendsService.getUserFriends()
+    this.userFriendsObs.subscribe(userFriends => {
+      this.userFriends = userFriends
+    })
   }
 
   remove(friend: User) {

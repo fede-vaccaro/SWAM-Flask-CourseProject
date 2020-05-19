@@ -1,3 +1,4 @@
+
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/models/user';
 import { UserRepositoryService } from 'src/app/repositories/user-repository.service';
@@ -12,6 +13,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./select-participants.component.scss'],
 })
 export class SelectParticipantsComponent implements OnInit {
+  userFriendsObs: Observable<UserFriends>
   userFriends: UserFriends
   @Input()
   participants: User[]
@@ -21,9 +23,11 @@ export class SelectParticipantsComponent implements OnInit {
   ) {
   }
 
-  async ngOnInit() {
-    this.userFriends = await this.userFriendsService.getUserFriends()
-    console.log(this.userFriends)
+  async  ngOnInit() {
+    this.userFriendsObs = this.userFriendsService.getUserFriends()
+    this.userFriendsObs.subscribe(userFriends => {
+      this.userFriends = userFriends
+    })
   }
 
   updateParticipants(user: User) {

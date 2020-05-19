@@ -73,11 +73,10 @@ export class SplitTicketPage implements OnInit {
     let productIndex: number = this.findProductThatNotContainParticipants()
     if (productIndex === -1)
       try {
-        this.ticketService.save(this.ticket)
+        await this.ticketService.save(this.ticket)
         this.presentToast("Saved correctly").then(
           () => {
             this.navController.back();
-            // this.router.navigate(['tabs/status']);
           }
         )
       } catch (error) {

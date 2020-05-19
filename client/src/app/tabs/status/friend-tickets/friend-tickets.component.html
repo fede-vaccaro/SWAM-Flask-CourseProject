@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <div *ngIf="userFriendsObs | async">
-            <ion-title *ngIf="selectedFriend">
-                <span>Tickets with: {{ selectedFriend.username }}</span>
+        <div *ngIf="friend">
+            <ion-title>
+                <span>Tickets with: {{ friend.name }}</span>
             </ion-title>
         </div>
 
@@ -12,32 +12,47 @@
     </ion-toolbar>
 </ion-header>
 
-<div style="position: absolute; top: 50%; left: 16px;font-size: 25px; z-index: 2;">
-    <ion-icon name="arrow-back"></ion-icon>
-</div>
-<div style="position: absolute; top: 50%; right: 16px; font-size: 25px; z-index: 2;">
-    <ion-icon name="arrow-forward"></ion-icon>
-</div>
+<ion-segment  value="0" (ionChange)="changeSlideFromSegment($event)">
+    <ion-segment-button value="0">
+        <ion-label>Debts</ion-label>
+    </ion-segment-button>
+    <ion-segment-button  value="1">
+        <ion-label>Credits</ion-label>
+    </ion-segment-button>
+</ion-segment>
 
 <ion-content>
-    <div *ngIf="userFriendsObs | async">
-        <ion-slides [options]="this.slideOpts" (ionSlideDidChange)="getInfoFromCurrentSlide()"  (ionSlidesDidLoad)="getInfoFromCurrentSlide()">
-            <ion-slide  *ngFor="let friend of userFriends.friends">
-                <app-friend-slide #friendSlide [friend]="friend" [loggedUser]="loggedUser"></app-friend-slide>
+    <div *ngIf="didInit">
+        <ion-slides #slides [options]="this.slideOpts" *ngIf="this.friend" (ionSlideWillChange)="changeSegmentFromSlide($event)" >
+            <ion-slide>
+                <app-friend-slide #friendSlide [friend]="friend" [loggedUser]="loggedUser" [debtSelected]="true"></app-friend-slide>
+            </ion-slide>
+            <ion-slide>
+                <app-friend-slide [friend]="friend" [loggedUser]="loggedUser" [debtSelected]="false"></app-friend-slide>
             </ion-slide>
         </ion-slides>
     </div>
 
-    <div *ngIf="!(userFriendsObs | async)" style="position: absolute; left: 50%; right: 50%; bottom: 50%;">
-        <ion-spinner></ion-spinner>
-    </div>
+<!--    <div *ngIf="!(userFriendsObs | async)" style="position: absolute; left: 50%; right: 50%; bottom: 50%;">-->
+<!--        <ion-spinner></ion-spinner>-->
+<!--    </div>-->
 </ion-content>
 
+<!--<div *ngIf="false">-->
+<!--    <div style="position: absolute; top: 50%; left: 16px;font-size: 25px; z-index: 2;">-->
+<!--        <ion-icon name="arrow-back" (click)="slides.lockSwipes(false); slides.slidePrev();"></ion-icon>-->
+<!--    </div>-->
+<!--    <div style="position: absolute; top: 50%; right: 16px; font-size: 25px; z-index: 2;">-->
+<!--        <ion-icon name="arrow-forward" (click)="slides.lockSwipes(false); slides.slideNext();"></ion-icon>-->
+<!--    </div>-->
+<!--</div>-->
+
 <ion-footer style="text-align: center">
-    <h6>Debt: <ion-text color="danger">-{{ this.displayedDebt }}€</ion-text>; Credit: <ion-text color="success">+{{ this.displayedCredit }}€</ion-text>; Total: {{ this.displayedTotal }}€</h6>
+    <h6>Debt:
+        <ion-text color="danger">-{{ this.displayedDebt }}€</ion-text>
+        ; Credit:
+        <ion-text color="success">+{{ this.displayedCredit }}€</ion-text>
+        ; Total: {{ this.displayedTotal }}€
+    </h6>
     <ion-button expand="block" (click)="presentPopover()" [disabled]="this.total >= -0.01">Pay all</ion-button>
 </ion-footer>
-
-
-
-

@@ -18,9 +18,11 @@ import { MessagesRepositoryService } from './repositories/messages-repository.se
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UserFriendsPipe } from './pipe/user-friends.pipe';
+import { LoggedUserTicketPipe } from './pipe/logged-user-ticket.pipe';
+import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
 
 @NgModule({
-    declarations: [AppComponent, FirebaseTicketPipe, FirebaseDebtTicketPipe, UserFriendsPipe],
+    declarations: [AppComponent, FirebaseTicketPipe, FirebaseDebtTicketPipe, UserFriendsPipe, LoggedUserTicketPipe, DebtTicketPipe],
     entryComponents: [],
     imports: [
         BrowserModule,
@@ -37,6 +39,8 @@ import { UserFriendsPipe } from './pipe/user-friends.pipe';
         AngularFirestore,
         FirebaseTicketPipe,
         FirebaseDebtTicketPipe,
+        LoggedUserTicketPipe,
+        DebtTicketPipe,
         Camera,
         MessagesRepositoryService,
         UserFriendsPipe,

@@ -34,7 +34,7 @@ export class StatusPage implements OnInit {
 
     private ticketsByFriendObs: Observable<DebtTicket[]>;
     private ticketsByMeObs: Observable<DebtTicket[]>;
-    private inboxMessagesObs: Observable<InboxMessage[]>;
+    //private inboxMessagesObs: Observable<InboxMessage[]>;
 
 
     constructor(private userFriendsService: UserFriendsService,
@@ -53,14 +53,17 @@ export class StatusPage implements OnInit {
     }
 
     async ngOnInit() {
-        // federico.vaccaro@stud.unifi.it
-        // palazzolo1995@gmail.com
-        // this.user = {name: 'PALAZZOLO', email: 'palazzolo1995@gmail.com'};// await this.loginService.getLoggedUser();
-        this.userFriends = await this.userFriendsService.getUserFriends();
-            if (this.userFriends !== undefined) {
+        this.user = await this.loginService.getLoggedUser();
+        this.userFriendsObs = this.userFriendsService.getUserFriends();
+        this.userFriendsObs.subscribe(async userFriends => {
+            if (userFriends !== undefined) {
+                this.userFriends = userFriends;
                 for (const user of this.userFriends.friends) {
-                    this.ticketsByFriendObs = await this.ticketService.getDebtTicketsOf(user);
+
+
+                    this.ticketsByFriendObs = this.ticketService.getCreditTicketsFrom(user);//TODO getDebtTicketsOf
                     this.ticketsByFriendObs.subscribe(tArr => {
+                        console.log(tArr)
                         this.debts[user.email] = 0.0;
 
                         tArr.forEach(t => this.debts[user.email] += (t.totalPrice - t.paidPrice));
@@ -69,7 +72,7 @@ export class StatusPage implements OnInit {
                         this.updateTotals(user);
                     });
 
-                    this.ticketsByMeObs = await this.ticketService.getCreditTicketsFrom(user);
+                    this.ticketsByMeObs = this.ticketService.getCreditTicketsFrom(user);
                     this.ticketsByMeObs.subscribe(tArr => {
                         this.credits[user.email] = 0.0;
 
@@ -82,15 +85,17 @@ export class StatusPage implements OnInit {
                 }
                 this.noFriends = this.userFriends.friends.length === 0;
             }
-        this.inboxMessagesObs = await this.messagesRepositoryService.retrieveLoggedUserInbox();
-        this.inboxMessagesObs.subscribe(mArr => {
-            this.newMessages = 0;
-            mArr.forEach(m => (this.newMessages += (m.displayed ? 0 : 1)));
         });
+        // this.inboxMessagesObs = await this.messagesRepositoryService.retrieveLoggedUserInbox();
+        // this.inboxMessagesObs.subscribe(mArr => {
+        //     this.newMessages = 0;
+        //     mArr.forEach(m => (this.newMessages += (m.displayed ? 0 : 1)));
+        // });
     }
 
-    goToFriendTicket(index) {
-        this.router.navigateByUrl('tabs/status/friend-tickets', {state: {friendIndex: index}});
+    goToFriendTickets(friend: User) {
+        console.log(friend);
+        this.router.navigateByUrl('tabs/status/friend-tickets', {state: {friend: friend}});
     }
 
     async presentNotificationPopover(ev: any) {

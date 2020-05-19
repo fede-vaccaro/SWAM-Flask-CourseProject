@@ -9,11 +9,11 @@
       <ion-fab-button style="z-index: 1;">
         <ion-icon name="notifications-outline" size="large"></ion-icon>
       </ion-fab-button>
-      <ion-badge color="danger" *ngIf="this.inboxMessagesObs | async"
+      <!-- <ion-badge color="danger" *ngIf="this.inboxMessagesObs | async"
         ><span *ngIf="newMessages !== 0"
           >{{ this.newMessages }}</span
         ></ion-badge
-      >
+      > -->
     </div>
   </ion-toolbar>
 </ion-header>
@@ -37,7 +37,7 @@
   <div *ngIf="userFriendsObs | async">
     <ion-list>
       <ion-card *ngFor="let friend of userFriends.friends; index as index"
-      (click)="goToFriendTicket(index)">
+      (click)="goToFriendTickets(friend)">
         <ion-item
           button
         >

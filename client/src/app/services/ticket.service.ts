@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { DebtTicket, Ticket } from '../models/ticket';
 import { User } from '../models/user';
 import { UserFriends } from '../models/user-friends';
@@ -10,6 +10,8 @@ import { TicketRepositoryService } from '../repositories/ticket-repository.servi
 import { LoginService } from './login.service';
 import { UserFriendsService } from './user-friends.service';
 import { environment } from 'src/environments/environment';
+import { LoggedUserTicketPipe } from '../pipe/logged-user-ticket.pipe';
+import { DebtTicketPipe } from '../pipe/debt-ticket.pipe';
 
 @Injectable({
     providedIn: 'root'
@@ -18,20 +20,22 @@ export class TicketService {
 
     constructor(
         private http: HttpClient,
+        private loggedUserTicketPipe: LoggedUserTicketPipe,
+        private debtTicketPipe: DebtTicketPipe,
         private ticketRepositoryService: TicketRepositoryService,
         private loginService: LoginService,
         private userFriendsService: UserFriendsService,
     ) { }
 
-    save(ticket: Ticket) {
-        return this.http.post(`${environment.serverUrl}/tickets`, { items: ticket.products })
+    async save(ticket: Ticket) {
+        if (ticket.id === undefined)
+            return this.http.post(`${environment.serverUrl}/tickets`, { items: ticket.products }).pipe(first()).toPromise()
+        return this.http.patch(`${environment.serverUrl}/ticket/${ticket.id}`, { items: ticket.products }).pipe(first()).toPromise()
     }
 
-    getTicketsOfLoggedUser(): Promise<Observable<Ticket[]>> {
-        return this.loginService.getLoggedUser()
-            .then(loggedUser => {
-                return this.ticketRepositoryService.getActiveTicketsOf(loggedUser);
-            });
+    getTicketsOfLoggedUser(): Observable<Ticket[]> {
+        return this.http.get(`${environment.serverUrl}/tickets`)
+            .pipe(first(), map(tickets => this.loggedUserTicketPipe.transform(tickets)))
     }
 
     getPassedTicketsOfLoggedUser(): Promise<Observable<Ticket[]>> {
@@ -48,16 +52,14 @@ export class TicketService {
             });
     }
 
-    getCreditTicketsFrom(user: User): Promise<Observable<DebtTicket[]>> {
-        return this.loginService.getLoggedUser()
-            .then(loggedUser => {
-                return this.ticketRepositoryService.getDebtTicketsOf(user, loggedUser);
-            });
+    getCreditTicketsFrom(user: User): Observable<DebtTicket[]> {
+        return this.http.get(`${environment.serverUrl}/credit/${user.id}`)
+            .pipe(first(), map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
     async getPaidTicketsOfLoggedUser(): Promise<DebtTicket[]> {
         const loggedUser: User = await this.loginService.getLoggedUser();
-        const loggedUserFriends: UserFriends = await this.userFriendsService.getUserFriends()
+        const loggedUserFriends: UserFriends = await this.userFriendsService.getUserFriends().toPromise()
         return await Promise.all(
             loggedUserFriends.friends.map(
                 async friend => {

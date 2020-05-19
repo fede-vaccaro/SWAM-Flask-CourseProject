@@ -10,7 +10,10 @@ class TicketService:
     def add_ticket(item_dicts):
         ticket = Ticket()
 
-        new_items_list, accountings_list = TicketService._generate_items_and_accountings(item_dicts)
+        (
+            new_items_list,
+            accountings_list,
+        ) = TicketService._generate_items_and_accountings(item_dicts)
 
         for new_item in new_items_list:
             ticket.items.append(new_item)
@@ -26,8 +29,10 @@ class TicketService:
     @staticmethod
     def update_ticket(ticket, items):
         if ticket is not None:
-            items, new_accountings = TicketService._generate_items_and_accountings(items)
-
+            items, new_accountings = TicketService._generate_items_and_accountings(
+                items
+            )
+            print(ticket)
             # remove all previous items and add the new ones
             Item.query.filter_by(ticket=ticket.id).delete()
             for item in items:
@@ -46,12 +51,17 @@ class TicketService:
             # set the old paidPrice to the new_accountings
             for user in new_accountings_dict.keys():
                 if user in old_accountings_dict.keys():
-                    new_accountings_dict[user].paidPrice = old_accountings_dict[user].paidPrice
+                    new_accountings_dict[user].paidPrice = old_accountings_dict[
+                        user
+                    ].paidPrice
 
                     # check if any old accountings no more exists
             # eventually, it creates a new accounting with totalPrice equal to 0 while conserving paidPrice
             for user in old_accountings_dict.keys():
-                if user not in new_accountings_dict.keys() and old_accountings_dict[user].paidPrice > 0.0:
+                if (
+                    user not in new_accountings_dict.keys()
+                    and old_accountings_dict[user].paidPrice > 0.0
+                ):
                     # transfer the old accounting to the new map
                     accounting = old_accountings_dict[user]
                     accounting.totalPrice = 0.0
@@ -67,10 +77,17 @@ class TicketService:
                 if accounting.totalPrice < accounting.paidPrice:
                     refund_ticket = Ticket()
 
-                    refund = Item(name="Refund ticket update", price=accounting.paidPrice - accounting.totalPrice)
+                    refund = Item(
+                        name="Refund ticket update",
+                        price=accounting.paidPrice - accounting.totalPrice,
+                    )
                     refund.participants.append(UserService.get_logged_user())
 
-                    refund_accounting = Accounting(totalPrice=refund.price, user_from=user, user_to=UserService.get_logged_user().id)
+                    refund_accounting = Accounting(
+                        totalPrice=refund.price,
+                        user_from=user,
+                        user_to=UserService.get_logged_user().id,
+                    )
 
                     refund_ticket.items.append(refund)
                     refund_ticket.accountings.append(refund_accounting)
@@ -97,29 +114,30 @@ class TicketService:
         for item in item_dicts:
             new_item = Item()
             try:
-                new_item.name = item['name']
+                new_item.name = item["name"]
             except:
-                raise TicketInputError('One item has no name.')
+                raise TicketInputError("One item has no name.")
 
             try:
-                new_item.quantity = int( item['quantity'])
+                new_item.quantity = int(item["quantity"])
             except:
                 new_item.quantity = 1
 
             try:
-                new_item.price = float(item['price'])
+                new_item.price = float(item["price"])
             except:
-                raise TicketInputError('Item {} has no price specified.'.format(item))
+                raise TicketInputError("Item {} has no price specified.".format(item))
 
-
-            n_participants = len(item['participants'])
+            n_participants = len(item["participants"])
             if n_participants == 0:
                 raise TicketInputError("Item {} has no participants.".format(item))
             price_pro_capite = new_item.price * new_item.quantity / n_participants
 
             # set participants
-            for participant_name in item['participants']:
-                participant = User.query.filter_by(username=participant_name['username']).first()
+            for participant_name in item["participants"]:
+                participant = User.query.filter_by(
+                    username=participant_name["username"]
+                ).first()
                 if participant is not None:
                     new_item.participants.append(participant)
                     if participant in accountings.keys():
@@ -127,7 +145,9 @@ class TicketService:
                     else:
                         accountings[participant] = price_pro_capite
                 else:
-                    raise TicketInputError("User '{}' does not exist.".format(participant_name))
+                    raise TicketInputError(
+                        "User '{}' does not exist.".format(participant_name)
+                    )
 
             new_item_list.append(new_item)
 
@@ -152,7 +172,11 @@ class TicketService:
         ticket_set = set()
         for accounting in accountings:
             ticket_set.add(accounting.ticket)
-        tickets = Ticket.query.filter(Ticket.id.in_(ticket_set)).order_by(Ticket.timestamp.desc()).all()
+        tickets = (
+            Ticket.query.filter(Ticket.id.in_(ticket_set))
+            .order_by(Ticket.timestamp.desc())
+            .all()
+        )
         return tickets
 
     @staticmethod
@@ -162,7 +186,6 @@ class TicketService:
 
 
 class UserService:
-
     @staticmethod
     def authenticate(username, password):
         user = User.query.filter_by(username=username).first()
@@ -198,3 +221,8 @@ class AccountingService:
     def get_all_credits_accountings():
         logged_user = UserService.get_logged_user()
         return Accounting.query.filter_by(user_from=logged_user.id).all()
+
+    @staticmethod
+    def get_credits_accountings_of(id):
+        logged_user = UserService.get_logged_user()
+        return Accounting.query.filter_by(user_from=logged_user.id, user_to=id).all()

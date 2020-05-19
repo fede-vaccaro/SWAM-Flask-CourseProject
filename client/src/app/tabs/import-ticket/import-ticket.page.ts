@@ -1,15 +1,14 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonSlides, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { Ticket } from 'src/app/models/ticket';
 import { User } from 'src/app/models/user';
+import { CameraScanService } from 'src/app/services/camera-scan.service';
 import { LoginService } from 'src/app/services/login.service';
 import { PdfToTextService } from 'src/app/services/pdf-to-text.service';
 import { TicketFormatterService } from 'src/app/services/ticket-formatter.service';
-import { of, Observable, Subject } from 'rxjs';
-import { first, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { CameraScanService } from 'src/app/services/camera-scan.service';
 
 @Component({
   selector: 'app-import-ticket',
@@ -97,7 +96,6 @@ export class ImportTicketPage {
       ticket.market = this.market
       ticket.participants = this.participants
       ticket.timestamp = Date.now()
-      ticket.id = Date.now().toString()
       this.router.navigateByUrl("tabs/ticket/split", { state: { ticket: ticket } });
     })
   }

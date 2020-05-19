@@ -22,10 +22,9 @@ export class UserFriendsService {
   ) {
   }
 
-  async getUserFriends(): Promise<UserFriends> {
-    return await this.http.get(`${environment.serverUrl}/users`)
-      .pipe(first(), map((userArray: any[]) => this.userFriendsPipe.transform(userArray)))
-      .toPromise()
+  getUserFriends(): Observable<UserFriends> {
+    return this.http.get(`${environment.serverUrl}/users`)
+      .pipe(first(), map(userFriends => this.userFriendsPipe.transform(userFriends)))
   }
 
   async addFriend(userId: string, friendId: string, userFriends: UserFriends) {

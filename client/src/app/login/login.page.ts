@@ -3,6 +3,7 @@ import { LoginService } from '../services/login.service';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { first } from 'rxjs/operators';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-login',
@@ -10,11 +11,13 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+
   loadingUser: boolean = true
   username: string
   password: string
 
   constructor(
+    public toastController: ToastController,
     private loginService: LoginService,
     private router: Router,
   ) { }
@@ -25,10 +28,21 @@ export class LoginPage implements OnInit {
     const user: User = { username: this.username, password: this.password }
     this.loginService.login(user).pipe(first()).subscribe(a => {
       this.clearForm()
-      console.log(a)
       this.router.navigateByUrl('tabs/status')
     },
       err => console.log(err.error))
+  }
+
+  signin() {
+    const user: User = { username: this.username, password: this.password }
+    this.loginService.signin(user).pipe(first()).subscribe(user => {
+      this.clearForm()
+      this.presentToast(`Success! You are now signed is as: ${user.username}`)
+    },
+      err => {
+        this.clearForm()
+        this.presentToast(`An error occurred!`)
+      })
   }
 
   clearForm() {
@@ -36,8 +50,13 @@ export class LoginPage implements OnInit {
     this.password = null
   }
 
-  test(){
-    this.loginService.test()
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: "middle",
+    });
+    toast.present();
   }
 
 }

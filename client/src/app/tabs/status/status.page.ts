@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
-import { Observable } from 'rxjs';
-import { User } from 'src/app/models/user';
-import { UserFriends } from 'src/app/models/user-friends';
-import { UserFriendsService } from 'src/app/services/user-friends.service';
-import { InboxMessage } from '../../models/inbox-message';
-import { DebtTicket } from '../../models/ticket';
-import { MessagesRepositoryService } from '../../repositories/messages-repository.service';
-import { LoginService } from '../../services/login.service';
-import { TicketService } from '../../services/ticket.service';
-import { NotificationPopoverComponent } from './notification-popover/notification-popover.component';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
+import {PopoverController} from '@ionic/angular';
+import {Observable} from 'rxjs';
+import {User} from 'src/app/models/user';
+import {UserFriends} from 'src/app/models/user-friends';
+import {UserFriendsService} from 'src/app/services/user-friends.service';
+import {InboxMessage} from '../../models/inbox-message';
+import {DebtTicket} from '../../models/ticket';
+import {MessagesRepositoryService} from '../../repositories/messages-repository.service';
+import {LoginService} from '../../services/login.service';
+import {TicketService} from '../../services/ticket.service';
+import {NotificationPopoverComponent} from './notification-popover/notification-popover.component';
 
 
 @Component({
@@ -34,15 +34,16 @@ export class StatusPage {
 
     private ticketsByFriendObs: Observable<DebtTicket[]>;
     private ticketsByMeObs: Observable<DebtTicket[]>;
+
     //private inboxMessagesObs: Observable<InboxMessage[]>;
 
 
     constructor(private userFriendsService: UserFriendsService,
-        private ticketService: TicketService,
-        private loginService: LoginService,
-        private router: Router,
-        private popoverController: PopoverController,
-        private messagesRepositoryService: MessagesRepositoryService) {
+                private ticketService: TicketService,
+                private loginService: LoginService,
+                private router: Router,
+                private popoverController: PopoverController,
+                private messagesRepositoryService: MessagesRepositoryService) {
     }
 
     updateTotals(user: User) {
@@ -56,29 +57,30 @@ export class StatusPage {
         this.user = this.loginService.getLoggedUser();
         this.userFriendsObs = this.userFriendsService.getUserFriends();
         this.userFriendsObs.subscribe(userFriends => {
-                this.userFriends = userFriends;
-                for (const user of this.userFriends.friends) {
-                    this.ticketsByFriendObs = this.ticketService.getDebtTicketsOf(user);
-                    this.ticketsByFriendObs.subscribe(tArr => {
-                        this.debts[user.email] = 0.0;
-                        tArr.forEach(t => this.debts[user.email] += (t.totalPrice - t.paidPrice));
-                        this.debts[user.email] = this.debts[user.email].toFixed(2);
+            this.userFriends = userFriends;
+            for (const user of this.userFriends.friends) {
+                this.ticketsByFriendObs = this.ticketService.getDebtTicketsOf(user);
+                this.ticketsByFriendObs.subscribe(tArr => {
+                    this.debts[user.email] = 0.0;
+                    tArr.forEach(t => this.debts[user.email] += (t.totalPrice - t.paidPrice));
+                    this.debts[user.email] = this.debts[user.email].toFixed(2);
+                    this.updateTotals(user);
+                });
 
-                        this.updateTotals(user);
-                    });
+                this.ticketsByMeObs = this.ticketService.getCreditTicketsFrom(user);
+                this.ticketsByMeObs.subscribe(tArr => {
+                    this.credits[user.email] = 0.0;
 
-                    this.ticketsByMeObs = this.ticketService.getCreditTicketsFrom(user);
-                    this.ticketsByMeObs.subscribe(tArr => {
-                        this.credits[user.email] = 0.0;
+                    tArr.forEach(t => this.credits[user.email] += (t.totalPrice - t.paidPrice));
+                    this.credits[user.email] = this.credits[user.email].toFixed(2);
+                        
+                    tArr.forEach(t => console.log('TICKET OWNER:', t.owner));
 
-                        tArr.forEach(t => this.credits[user.email] += (t.totalPrice - t.paidPrice));
-                        this.credits[user.email] = this.credits[user.email].toFixed(2);
+                    this.updateTotals(user);
+                });
 
-                        this.updateTotals(user);
-                    });
-
-                }
-                this.noFriends = this.userFriends.friends.length === 0;
+            }
+            this.noFriends = this.userFriends.friends.length === 0;
         });
         // this.inboxMessagesObs = await this.messagesRepositoryService.retrieveLoggedUserInbox();
         // this.inboxMessagesObs.subscribe(mArr => {
@@ -88,7 +90,7 @@ export class StatusPage {
     }
 
     goToFriendTickets(friend: User) {
-        this.router.navigateByUrl('tabs/status/friend-tickets', { state: { friend: friend } });
+        this.router.navigateByUrl('tabs/status/friend-tickets', {state: {friend: friend}});
     }
 
     async presentNotificationPopover(ev: any) {

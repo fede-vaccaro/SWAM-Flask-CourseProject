@@ -16,7 +16,7 @@ def noAuth():
 
 
 class UserListAPI(Resource):
-    resource_path = '/users/'
+    resource_path = '/users'
 
     @jwt_required
     @marshal_with(fields.user_fields)
@@ -70,7 +70,7 @@ class AuthenticationAPI(Resource):
         user = UserService.authenticate(username, password)
         if user:
             access_token = create_access_token(identity=user.id)
-            response = jsonify({'token': access_token, 'user': user.id})
+            response = jsonify({"token": access_token, "user": user.id, "username": user.username})
             response.status_code = status.HTTP_200_OK
             return response
         else:
@@ -78,7 +78,7 @@ class AuthenticationAPI(Resource):
 
 
 class UserAPI(Resource):
-    resource_path = '/users/<int:id>'
+    resource_path = '/user/<int:id>'
 
     @jwt_required
     def get(self):
@@ -86,7 +86,7 @@ class UserAPI(Resource):
 
 
 class TicketsAPI(Resource):
-    resource_path = '/tickets/'
+    resource_path = '/tickets'
 
     @jwt_required
     @marshal_with(fields.ticket_fields)
@@ -103,14 +103,14 @@ class TicketsAPI(Resource):
         return new_ticket, status.HTTP_201_CREATED
 
     @jwt_required
-    @marshal_with(fields.small_ticket_fields)
+    @marshal_with(fields.ticket_fields)
     def get(self):
         tickets = TicketService.get_logged_user_tickets()
         return tickets
 
 
 class DebtsAPI(Resource):
-    resource_path = '/debts/'
+    resource_path = '/debts'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -120,7 +120,7 @@ class DebtsAPI(Resource):
 
 
 class CreditsAPI(Resource):
-    resource_path = '/credits/'
+    resource_path = '/credits'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)

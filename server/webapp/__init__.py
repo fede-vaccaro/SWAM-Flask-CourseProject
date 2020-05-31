@@ -13,6 +13,8 @@ def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
     cors = CORS(app)
+
+    cors.init_app(app)
     bcrypt.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)

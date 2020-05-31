@@ -91,13 +91,13 @@ export class ImportTicketPage {
   }
 
   async navigateToSplitTicket(ticket: Ticket) {
-    this.loginService.getLoggedUser().then(owner => {
-      ticket.owner = owner
-      ticket.market = this.market
-      ticket.participants = this.participants
-      ticket.timestamp = Date.now()
-      this.router.navigateByUrl("tabs/ticket/split", { state: { ticket: ticket } });
-    })
+    let owner = this.loginService.getLoggedUser()
+    ticket.owner = owner
+    ticket.market = this.market
+    ticket.participants = this.participants
+    ticket.participants.push(owner)
+    ticket.timestamp = Date.now()
+    this.router.navigateByUrl("tabs/ticket/split", { state: { ticket: ticket } });
   }
 
   hasMarketMethodAndParticipantsSelected() {

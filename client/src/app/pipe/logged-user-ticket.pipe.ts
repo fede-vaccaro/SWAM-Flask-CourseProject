@@ -17,7 +17,7 @@ export class LoggedUserTicketPipe implements PipeTransform {
         {
           id: dbTicket.id,
           market: 'Generic',
-          owner: this.loginService.getUser(),
+          owner: this.loginService.getLoggedUser(),
           products: dbTicket.items,
           timestamp: dbTicket.timestamp,
           totalPrice: dbTicket.items.reduce((i, j) => i + j.price * j.quantity, 0),

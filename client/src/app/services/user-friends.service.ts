@@ -8,6 +8,7 @@ import { first, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UserFriendsPipe } from '../pipe/user-friends.pipe';
+import { LoginService } from './login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +20,14 @@ export class UserFriendsService {
     private userFriendsRepositoryService: UserFriendsRepositoryService,
     private userRepositoryService: UserRepositoryService,
     private userFriendsPipe: UserFriendsPipe,
+    private loginService: LoginService,
   ) {
   }
 
   getUserFriends(): Observable<UserFriends> {
+    const loggedUser: User = this.loginService.getLoggedUser()
     return this.http.get(`${environment.serverUrl}/users`)
-      .pipe(first(), map(userFriends => this.userFriendsPipe.transform(userFriends)))
+      .pipe(map(userFriends => this.userFriendsPipe.transform(userFriends, loggedUser)))
   }
 
   async addFriend(userId: string, friendId: string, userFriends: UserFriends) {

@@ -25,6 +25,7 @@ export class LoginPage implements OnInit {
     const user: User = { username: this.username, password: this.password }
     this.loginService.login(user).pipe(first()).subscribe(a => {
       this.clearForm()
+      console.log(a)
       this.router.navigateByUrl('tabs/status')
     },
       err => console.log(err.error))

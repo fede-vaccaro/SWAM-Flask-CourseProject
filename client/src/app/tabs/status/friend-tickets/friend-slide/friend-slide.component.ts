@@ -43,7 +43,7 @@ export class FriendSlideComponent implements OnInit {
 
     async ngOnInit() {
         // this.ticketsByFriend = this.ticketService.getTicketBoughtByWithParticipant(this.friend, this.loggedUser);
-        this.ticketsByFriendObs = this.ticketService.getCreditTicketsFrom(this.friend);//TODO getDebtTicketsOf
+        this.ticketsByFriendObs = this.ticketService.getDebtTicketsOf(this.friend);//TODO getDebtTicketsOf
         this.ticketsByFriendObs.subscribe(tArr => {
             this.ticketsByFriend = tArr.reverse();
             this.debt = 0.0;

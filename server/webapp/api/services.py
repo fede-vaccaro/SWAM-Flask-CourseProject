@@ -215,6 +215,7 @@ class AccountingService:
     @staticmethod
     def get_all_debts_accountings():
         logged_user = UserService.get_logged_user()
+
         return Accounting.query.filter_by(user_to=logged_user.id).all()
 
     @staticmethod
@@ -223,6 +224,44 @@ class AccountingService:
         return Accounting.query.filter_by(user_from=logged_user.id).all()
 
     @staticmethod
+    def get_debt_accountings_of(id):
+        logged_user = UserService.get_logged_user()
+        return Accounting.query.filter_by(
+            user_from=id, user_to=logged_user.id, paidPrice=0.0
+        ).all()
+
+    @staticmethod
     def get_credits_accountings_of(id):
         logged_user = UserService.get_logged_user()
-        return Accounting.query.filter_by(user_from=logged_user.id, user_to=id).all()
+        return Accounting.query.filter_by(
+            user_from=logged_user.id, user_to=id, paidPrice=0.0
+        ).all()
+
+    @staticmethod
+    def pay_debt_accounting(id):
+        logged_user = UserService.get_logged_user()
+        accounting_to_pay = Accounting.query.filter_by(
+            id=id, user_to=logged_user.id
+        ).first()
+        accounting_to_pay.paidPrice = accounting_to_pay.totalPrice
+        db.session.commit()
+
+    @staticmethod
+    def pay_all_debts_accounting_to(id):
+        logged_user = UserService.get_logged_user()
+        debts = Accounting.query.filter_by(user_from=id, user_to=logged_user.id).all()
+        credits = Accounting.query.filter_by(user_from=logged_user.id, user_to=id).all()
+        accountings = debts + credits
+        for accounting in accountings:
+            accounting.paidPrice = accounting.totalPrice
+
+        db.session.commit()
+
+    @staticmethod
+    def mark_credit_accounting_paid(id):
+        logged_user = UserService.get_logged_user()
+        accounting_to_pay = Accounting.query.filter_by(
+            id=id, user_from=logged_user.id
+        ).first()
+        accounting_to_pay.paidPrice = accounting_to_pay.totalPrice
+        db.session.commit()

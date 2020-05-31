@@ -12,11 +12,11 @@ from .. import db
 
 
 def noAuth():
-    raise exc.BadRequest('Missing authentication header.')
+    raise exc.BadRequest("Missing authentication header.")
 
 
 class UserListAPI(Resource):
-    resource_path = '/users'
+    resource_path = "/users"
 
     @jwt_required
     @marshal_with(fields.user_fields)
@@ -26,8 +26,18 @@ class UserListAPI(Resource):
     @marshal_with(fields.user_fields)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument(User.username.key, type=str, required=True, help='You have to include the username!')
-        parser.add_argument(User.password.key, type=str, required=True, help='You have to include the password!')
+        parser.add_argument(
+            User.username.key,
+            type=str,
+            required=True,
+            help="You have to include the username!",
+        )
+        parser.add_argument(
+            User.password.key,
+            type=str,
+            required=True,
+            help="You have to include the password!",
+        )
 
         args = parser.parse_args()
 
@@ -40,7 +50,7 @@ class UserListAPI(Resource):
             db.session.rollback()
 
             if User.query.filter_by(username=username).first() is not None:
-                raise exc.BadRequest('Username {} already existent.'.format(username))
+                raise exc.BadRequest("Username {} already existent.".format(username))
 
             error = str(error.orig) + " for parameters" + str(error.params)
             print("An error occurred with the DB.", error)
@@ -50,17 +60,21 @@ class UserListAPI(Resource):
 
 
 class AuthenticationAPI(Resource):
-    resource_path = '/auth'
+    resource_path = "/auth"
 
     def post(self):
-        if not request.content_type == 'application/json':
+        if not request.content_type == "application/json":
             response = jsonify(message="Content Type is not 'application/json'")
             response.status_code = status.HTTP_400_BAD_REQUEST
             return response
 
         parser = reqparse.RequestParser()
-        parser.add_argument(User.username.key, type=str, required=True, help='Username missing')
-        parser.add_argument(User.password.key, type=str, required=True, help='Password missing')
+        parser.add_argument(
+            User.username.key, type=str, required=True, help="Username missing"
+        )
+        parser.add_argument(
+            User.password.key, type=str, required=True, help="Password missing"
+        )
 
         args = parser.parse_args()
 
@@ -70,15 +84,17 @@ class AuthenticationAPI(Resource):
         user = UserService.authenticate(username, password)
         if user:
             access_token = create_access_token(identity=user.id)
-            response = jsonify({'token': access_token, 'user': user.id, 'username': user.username})
+            response = jsonify(
+                {"token": access_token, "user": user.id, "username": user.username}
+            )
             response.status_code = status.HTTP_200_OK
             return response
         else:
-            raise exc.BadRequest('Wrong email or password.')
+            raise exc.BadRequest("Wrong email or password.")
 
 
 class UserAPI(Resource):
-    resource_path = '/user/<int:id>'
+    resource_path = "/user/<int:id>"
 
     @jwt_required
     def get(self):
@@ -86,17 +102,23 @@ class UserAPI(Resource):
 
 
 class TicketsAPI(Resource):
-    resource_path = '/tickets'
+    resource_path = "/tickets"
 
     @jwt_required
     @marshal_with(fields.ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
+        parser.add_argument(
+            "items",
+            type=dict,
+            action="append",
+            required=True,
+            help="Can't insert empty receipt!",
+        )
 
         args = parser.parse_args()
 
-        items = args['items']
+        items = args["items"]
 
         new_ticket = TicketService.add_ticket(items)
         return new_ticket
@@ -109,7 +131,7 @@ class TicketsAPI(Resource):
 
 
 class DebtsAPI(Resource):
-    resource_path = '/debts'
+    resource_path = "/debts"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -118,8 +140,19 @@ class DebtsAPI(Resource):
         return accountings
 
 
+class DebtAPI(Resource):
+    resource_path = "/debt/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accountings = AccountingService.get_debt_accountings_of(id)
+        print(accountings)
+        return accountings
+
+
 class CreditsAPI(Resource):
-    resource_path = '/credits'
+    resource_path = "/credits"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -127,8 +160,9 @@ class CreditsAPI(Resource):
         accountings = AccountingService.get_all_credits_accountings()
         return accountings
 
+
 class CreditAPI(Resource):
-    resource_path = '/credit/<int:id>'
+    resource_path = "/credit/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
@@ -137,8 +171,36 @@ class CreditAPI(Resource):
         return accountings
 
 
+class PayDebtAPI(Resource):
+    resource_path = "/pay-debt/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.pay_debt_accounting(id)
+        return accounting
+
+class PayAllDebtsAPI(Resource):
+    resource_path = "/pay-debts/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.pay_all_debts_accounting_to(id)
+        return accounting
+
+class CreditPaidAPI(Resource):
+    resource_path = "/credit-paid/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.mark_credit_accounting_paid(id)
+        return accounting
+
+
 class TicketAPI(Resource):
-    resource_path = '/ticket/<int:id>'
+    resource_path = "/ticket/<int:id>"
 
     @marshal_with(fields.ticket_fields)
     @jwt_required
@@ -162,11 +224,17 @@ class TicketAPI(Resource):
             raise exc.NotFound
 
         parser = reqparse.RequestParser()
-        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert empty receipt!")
+        parser.add_argument(
+            "items",
+            type=dict,
+            action="append",
+            required=True,
+            help="Can't insert empty receipt!",
+        )
 
         args = parser.parse_args()
 
-        items = args['items']
+        items = args["items"]
 
         updated_ticket = TicketService.update_ticket(ticket, items)
         return updated_ticket

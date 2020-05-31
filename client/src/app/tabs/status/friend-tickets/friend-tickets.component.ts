@@ -53,7 +53,7 @@ export class FriendTicketsComponent implements AfterViewInit {
             this.router.navigateByUrl('tabs/status');
         }
 
-        this.loggedUser = await this.loginService.getLoggedUser();
+        this.loggedUser = this.loginService.getLoggedUser();
         this.didInit = true;
     }
 

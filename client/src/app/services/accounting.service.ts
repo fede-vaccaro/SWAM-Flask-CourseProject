@@ -7,7 +7,7 @@ import {TicketService} from './ticket.service';
     providedIn: 'root'
 })
 export class AccountingService {
-    private loggedUser: Promise<User>;
+    private loggedUser: User;
 
     constructor(loginService: LoginService, ticketService: TicketService) {
         this.loggedUser = loginService.getLoggedUser();

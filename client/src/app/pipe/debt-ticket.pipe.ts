@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { DebtTicket } from '../models/ticket';
 
 @Pipe({
-  name: 'debitTicket'
+  name: 'debtTicket'
 })
 export class DebtTicketPipe implements PipeTransform {
 
@@ -19,11 +19,13 @@ export class DebtTicketPipe implements PipeTransform {
           products: dbDebtTicket.ticketRef.items,
           timestamp: dbDebtTicket.ticketRef.timestamp,
           totalPrice: dbDebtTicket.totalPrice,
+          paidPrice: dbDebtTicket.paidPrice,
           participant: dbDebtTicket.userTo,
         }
       )
     });
-
+    console.log(dbDebtTickets)
+    console.log(debtTickets)
     return debtTickets;
   }
 

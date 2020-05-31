@@ -38,23 +38,19 @@ export class TicketService {
             .pipe(first(), map(tickets => this.loggedUserTicketPipe.transform(tickets)))
     }
 
-    getPassedTicketsOfLoggedUser(): Promise<Observable<Ticket[]>> {
-        return this.loginService.getLoggedUser()
-            .then(loggedUser => {
-                return this.ticketRepositoryService.getPassedTicketsOf(loggedUser);
-            });
+    getPassedTicketsOfLoggedUser(): Observable<Ticket[]> {
+        let loggedUser = this.loginService.getLoggedUser()
+        return this.ticketRepositoryService.getPassedTicketsOf(loggedUser);
     }
 
-    getDebtTicketsOf(user: User): Promise<Observable<DebtTicket[]>> {
-        return this.loginService.getLoggedUser()
-            .then(loggedUser => {
-                return this.ticketRepositoryService.getDebtTicketsOf(loggedUser, user);
-            });
+    getDebtTicketsOf(user: User): Observable<DebtTicket[]> {
+        return this.http.get(`${environment.serverUrl}/debt/${user.id}`)
+            .pipe(map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
     getCreditTicketsFrom(user: User): Observable<DebtTicket[]> {
         return this.http.get(`${environment.serverUrl}/credit/${user.id}`)
-            .pipe(first(), map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
+            .pipe(map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
     async getPaidTicketsOfLoggedUser(): Promise<DebtTicket[]> {
@@ -75,51 +71,17 @@ export class TicketService {
     }
 
     async payAllDebtTicketTo(receivingUser: User) {
-        // first pay all ticket to
-        const ticketsByFriendObs: Observable<DebtTicket[]> = await this.getDebtTicketsOf(receivingUser);
-        const ticketsByFriend = await ticketsByFriendObs.pipe(first()).toPromise();
-
-
-        while (ticketsByFriend.length !== 0) {
-            const debtTicket = ticketsByFriend.pop();
-            this.ticketRepositoryService.savePaidDebtTicket(debtTicket);
-            this.ticketRepositoryService.deleteDebtTicket(debtTicket);
-        }
-
-
-        // then pay all ticket from receivingUser to payer, if any
-        const ticketByPayerObs: Observable<DebtTicket[]> = await this.getCreditTicketsFrom(receivingUser);
-        const ticketByPayer = await ticketByPayerObs.pipe(first()).toPromise();
-
-        while (ticketByPayer.length !== 0) {
-            const debtTicket = ticketByPayer.pop();
-            this.ticketRepositoryService.savePaidDebtTicket(debtTicket);
-            this.ticketRepositoryService.deleteDebtTicket(debtTicket);
-        }
-
-        const loggedUser = await this.loginService.getLoggedUser();
-    }
-
-    async payDebtTicket(debtTicket: DebtTicket, paidPrice: number) {
-        const ticket = await this.ticketRepositoryService.getTicketOf(debtTicket.owner, debtTicket.timestamp.toString());
-        ticket.paidPrice += paidPrice;
-        if (debtTicket.paidPrice === debtTicket.totalPrice) {
-            this.ticketRepositoryService.savePaidDebtTicket(debtTicket);
-            this.ticketRepositoryService.deleteDebtTicket(debtTicket);
-        } else {
-            this.ticketRepositoryService.saveDebtTicket(debtTicket);
-        }
-
-        if (ticket.paidPrice === ticket.totalPrice) {
-            this.ticketRepositoryService.saveOwnerPassedTicket(ticket);
-            this.ticketRepositoryService.deleteTicket(ticket);
-        } else {
-            this.ticketRepositoryService.updateTicket(ticket);
-        }
+        return await this.http.get(`${environment.serverUrl}/pay-debts/${receivingUser.id}`)
+            .pipe(first()).toPromise()
     }
 
     async paySingleDebtTicket(debtTicket: DebtTicket) {
-        this.ticketRepositoryService.savePaidDebtTicket(debtTicket);
-        this.ticketRepositoryService.deleteDebtTicket(debtTicket);
+        const loggedUser: User = this.loginService.getLoggedUser()
+        if (debtTicket.owner.username === loggedUser.username)
+            return await this.http.get(`${environment.serverUrl}/credit-paid/${debtTicket.id}`)
+                .pipe(first()).toPromise()
+        else
+            return await this.http.get(`${environment.serverUrl}/pay-debt/${debtTicket.id}`)
+                .pipe(first()).toPromise()
     }
 }

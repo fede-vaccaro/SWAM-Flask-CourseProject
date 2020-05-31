@@ -3,7 +3,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { auth } from 'firebase';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user';
 
@@ -44,8 +44,8 @@ export class LoginService {
     this.router.navigate(['/login']);
   }
 
-  async getLoggedUser(): Promise<User> {//TODO remove this
-    return this.currentUserSubject.value
+  getLoggedUser(): User {
+    return JSON.parse(localStorage.getItem('currentUser')) as User
   }
 
   getUser() {

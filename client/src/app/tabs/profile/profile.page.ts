@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user';
 import { LoginService } from 'src/app/services/login.service';
@@ -10,7 +10,7 @@ import { toggleDarkTheme } from 'src/util/utils';
   templateUrl: 'profile.page.html',
   styleUrls: ['profile.page.scss']
 })
-export class ProfilePage {
+export class ProfilePage{
   user: User = {
     username: "",
     photoUrl: "",
@@ -20,13 +20,10 @@ export class ProfilePage {
 
   constructor(private router: Router, private loginService: LoginService, private ticketService: TicketService) {
   }
-
-  async ngOnInit() {
+  
+  ionViewWillEnter(){
     this.checked = localStorage.getItem('enableDark') === 'true'
-    try {
-      this.user = await this.loginService.getLoggedUser()
-    } catch (error) {
-    }
+    this.user = this.loginService.getLoggedUser()
   }
 
   logout() {

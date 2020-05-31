@@ -68,7 +68,6 @@ export class CameraScanService {
     let scannedArray: string[] = []
     return Tesseract.recognize(selectedPhoto).then(result => {
       result.data.lines.forEach(line => scannedArray.push(line.text))
-      console.log(result)
       this.attend = false
       return scannedArray
     })
@@ -81,7 +80,6 @@ export class CameraScanService {
     let product
     let price
     a.forEach(element => {
-      console.log(element)
       product = element.slice(0, element.length - 5)
       price = parseFloat(element.slice(element.length - 5, element.length).replace(',', '.'))
       if (!isNaN(price))

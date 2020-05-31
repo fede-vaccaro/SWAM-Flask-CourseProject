@@ -2,6 +2,7 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -11,7 +12,7 @@ bcrypt = Bcrypt()
 def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
-
+    cors = CORS(app)
     bcrypt.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)

@@ -92,7 +92,8 @@ class TicketsAPI(Resource):
     @marshal_with(fields.ticket_fields)
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('items', type=dict, action='append', required=True, help="Can't insert a ticket with no items!")
+        parser.add_argument('items', type=dict, action='append', required=True,
+                            help="Can't insert a ticket with no items!")
 
         args = parser.parse_args()
 
@@ -126,6 +127,57 @@ class CreditsAPI(Resource):
     def get(self):
         accountings = AccountingService.get_all_credits_accountings()
         return accountings
+
+
+class DebtAPI(Resource):
+    resource_path = "/debt/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accountings = AccountingService.get_debt_accountings_of(id)
+        print(accountings)
+        return accountings
+
+
+class CreditAPI(Resource):
+    resource_path = "/credit/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accountings = AccountingService.get_credits_accountings_of(id)
+        return accountings
+
+
+class PayDebtAPI(Resource):
+    resource_path = "/pay-debt/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.pay_debt_accounting(id)
+        return accounting
+
+
+class PayAllDebtsAPI(Resource):
+    resource_path = "/pay-debts/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.pay_all_debts_accounting_to(id)
+        return accounting
+
+
+class CreditPaidAPI(Resource):
+    resource_path = "/credit-paid/<int:id>"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self, id):
+        accounting = AccountingService.mark_credit_accounting_paid(id)
+        return accounting
 
 
 class TicketAPI(Resource):

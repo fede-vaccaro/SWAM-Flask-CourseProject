@@ -1,0 +1,7 @@
+{
+  "name": "appichetto",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

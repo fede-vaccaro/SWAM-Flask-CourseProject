@@ -1,0 +1,441 @@
+
+{
+  "header": {
+    "reportVersion": 2,
+    "event": "Allocation failed - JavaScript heap out of memory",
+    "trigger": "FatalError",
+    "filename": "report.20200502.110555.22601.0.001.json",
+    "dumpEventTime": "2020-05-02T11:05:55Z",
+    "dumpEventTimeStamp": "1588410355155",
+    "processId": 22601,
+    "threadId": null,
+    "cwd": "/mnt/18D8AC37D8AC1552/Unifi/HumanComputerInteraction/HCI-Project-Appichetto/appichetto",
+    "commandLine": [
+      "/usr/local/bin/node",
+      "/mnt/18D8AC37D8AC1552/Unifi/HumanComputerInteraction/HCI-Project-Appichetto/appichetto/node_modules/jest-worker/build/workers/processChild.js"
+    ],
+    "nodejsVersion": "v13.10.1",
+    "glibcVersionRuntime": "2.27",
+    "glibcVersionCompiler": "2.17",
+    "wordSize": 64,
+    "arch": "x64",
+    "platform": "linux",
+    "componentVersions": {
+      "node": "13.10.1",
+      "v8": "7.9.317.25-node.29",
+      "uv": "1.34.2",
+      "zlib": "1.2.11",
+      "brotli": "1.0.7",
+      "ares": "1.15.0",
+      "modules": "79",
+      "nghttp2": "1.40.0",
+      "napi": "5",
+      "llhttp": "2.0.4",
+      "openssl": "1.1.1d",
+      "cldr": "36.0",
+      "icu": "65.1",
+      "tz": "2019c",
+      "unicode": "12.1"
+    },
+    "release": {
+      "name": "node",
+      "headersUrl": "https://nodejs.org/download/release/v13.10.1/node-v13.10.1-headers.tar.gz",
+      "sourceUrl": "https://nodejs.org/download/release/v13.10.1/node-v13.10.1.tar.gz"
+    },
+    "osName": "Linux",
+    "osRelease": "4.15.0-99-generic",
+    "osVersion": "#100-Ubuntu SMP Wed Apr 22 20:32:56 UTC 2020",
+    "osMachine": "x86_64",
+    "cpus": [
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3300,
+        "user": 7643600,
+        "nice": 17200,
+        "sys": 1819600,
+        "idle": 65346300,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7599000,
+        "nice": 75600,
+        "sys": 1785700,
+        "idle": 65307500,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7482700,
+        "nice": 17600,
+        "sys": 1880200,
+        "idle": 65400000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7806900,
+        "nice": 20600,
+        "sys": 1795600,
+        "idle": 65042000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7610600,
+        "nice": 72500,
+        "sys": 1732900,
+        "idle": 65358400,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7585300,
+        "nice": 54700,
+        "sys": 1845600,
+        "idle": 64874000,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3299,
+        "user": 7430000,
+        "nice": 19100,
+        "sys": 1855300,
+        "idle": 65324200,
+        "irq": 0
+      },
+      {
+        "model": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+        "speed": 3300,
+        "user": 7755000,
+        "nice": 18900,
+        "sys": 1814400,
+        "idle": 62985500,
+        "irq": 0
+      }
+    ],
+    "networkInterfaces": [
+      {
+        "name": "lo",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "127.0.0.1",
+        "netmask": "255.0.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "wlp2s0",
+        "internal": false,
+        "mac": "9c:b6:d0:f8:ae:1b",
+        "address": "192.168.1.85",
+        "netmask": "255.255.255.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "docker0",
+        "internal": false,
+        "mac": "02:42:0d:11:f8:5c",
+        "address": "172.17.0.1",
+        "netmask": "255.255.0.0",
+        "family": "IPv4"
+      },
+      {
+        "name": "lo",
+        "internal": true,
+        "mac": "00:00:00:00:00:00",
+        "address": "::1",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "wlp2s0",
+        "internal": false,
+        "mac": "9c:b6:d0:f8:ae:1b",
+        "address": "2001:b07:2ec:fa26:2805:e88c:4fc1:2979",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "wlp2s0",
+        "internal": false,
+        "mac": "9c:b6:d0:f8:ae:1b",
+        "address": "2001:b07:2ec:fa26:3abe:aee3:baf0:da20",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "wlp2s0",
+        "internal": false,
+        "mac": "9c:b6:d0:f8:ae:1b",
+        "address": "fe80::15c3:73ce:aaf0:cf53",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 2
+      },
+      {
+        "name": "docker0",
+        "internal": false,
+        "mac": "02:42:0d:11:f8:5c",
+        "address": "fe80::42:dff:fe11:f85c",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 10
+      },
+      {
+        "name": "veth5723c5c",
+        "internal": false,
+        "mac": "fa:d5:44:ec:6f:75",
+        "address": "fe80::f8d5:44ff:feec:6f75",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 12
+      }
+    ],
+    "host": "bad-mother-fucker"
+  },
+  "javascriptStack": {
+    "message": "No stack.",
+    "stack": [
+      "Unavailable."
+    ]
+  },
+  "nativeStack": [
+    {
+      "pc": "0x0000000000b4aee5",
+      "symbol": "report::TriggerNodeReport(v8::Isolate*, node::Environment*, char const*, char const*, std::string const&, v8::Local<v8::String>) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000a0e96b",
+      "symbol": "node::OnFatalError(char const*, char const*) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000b81eae",
+      "symbol": "v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000b82229",
+      "symbol": "v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d30735",
+      "symbol": " [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d30dc6",
+      "symbol": "v8::internal::Heap::RecomputeLimits(v8::internal::GarbageCollector) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d3f639",
+      "symbol": "v8::internal::Heap::PerformGarbageCollection(v8::internal::GarbageCollector, v8::GCCallbackFlags) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d40475",
+      "symbol": "v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d42f4c",
+      "symbol": "v8::internal::Heap::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000000d09b24",
+      "symbol": "v8::internal::Factory::NewFillerObject(int, bool, v8::internal::AllocationType, v8::internal::AllocationOrigin) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x0000000001056e1e",
+      "symbol": "v8::internal::Runtime_AllocateInYoungGeneration(int, unsigned long*, v8::internal::Isolate*) [/usr/local/bin/node]"
+    },
+    {
+      "pc": "0x00000000013da5b9",
+      "symbol": " [/usr/local/bin/node]"
+    }
+  ],
+  "javascriptHeap": {
+    "totalMemory": 2178199552,
+    "totalCommittedMemory": 2172850144,
+    "usedMemory": 2103852432,
+    "availableMemory": 50558064,
+    "memoryLimit": 2197815296,
+    "heapSpaces": {
+      "read_only_space": {
+        "memorySize": 262144,
+        "committedMemory": 33328,
+        "capacity": 33040,
+        "used": 33040,
+        "available": 0
+      },
+      "new_space": {
+        "memorySize": 33554432,
+        "committedMemory": 28839664,
+        "capacity": 16758784,
+        "used": 2579496,
+        "available": 14179288
+      },
+      "old_space": {
+        "memorySize": 2093363200,
+        "committedMemory": 2093246720,
+        "capacity": 2050830712,
+        "used": 2050826464,
+        "available": 4248
+      },
+      "code_space": {
+        "memorySize": 954368,
+        "committedMemory": 839872,
+        "capacity": 788224,
+        "used": 788224,
+        "available": 0
+      },
+      "map_space": {
+        "memorySize": 1314816,
+        "committedMemory": 1139968,
+        "capacity": 981520,
+        "used": 981520,
+        "available": 0
+      },
+      "large_object_space": {
+        "memorySize": 48701440,
+        "committedMemory": 48701440,
+        "capacity": 48640904,
+        "used": 48640904,
+        "available": 0
+      },
+      "code_large_object_space": {
+        "memorySize": 49152,
+        "committedMemory": 49152,
+        "capacity": 2784,
+        "used": 2784,
+        "available": 0
+      },
+      "new_large_object_space": {
+        "memorySize": 0,
+        "committedMemory": 0,
+        "capacity": 16758784,
+        "used": 0,
+        "available": 16758784
+      }
+    }
+  },
+  "resourceUsage": {
+    "userCpuSeconds": 89.5708,
+    "kernelCpuSeconds": 1.69062,
+    "cpuConsumptionPercent": 136.211,
+    "maxRss": 2250883072,
+    "pageFaults": {
+      "IORequired": 624,
+      "IONotRequired": 624762
+    },
+    "fsActivity": {
+      "reads": 119536,
+      "writes": 0
+    }
+  },
+  "uvthreadResourceUsage": {
+    "userCpuSeconds": 40.5012,
+    "kernelCpuSeconds": 0.795787,
+    "cpuConsumptionPercent": 61.6373,
+    "fsActivity": {
+      "reads": 107696,
+      "writes": 0
+    }
+  },
+  "libuv": [
+  ],
+  "workers": [
+  ],
+  "environmentVariables": {
+    "LC_MEASUREMENT": "it_IT.UTF-8",
+    "LC_PAPER": "it_IT.UTF-8",
+    "LC_MONETARY": "it_IT.UTF-8",
+    "LANG": "en_US.UTF-8",
+    "DISPLAY": ":0",
+    "LC_NAME": "it_IT.UTF-8",
+    "HOME": "/home/palace22",
+    "LC_ADDRESS": "it_IT.UTF-8",
+    "LC_NUMERIC": "it_IT.UTF-8",
+    "LC_TELEPHONE": "it_IT.UTF-8",
+    "XAUTHORITY": "/run/user/1000/gdm/Xauthority",
+    "PATH": "/mnt/18D8AC37D8AC1552/Unifi/HumanComputerInteraction/HCI-Project-Appichetto/appichetto/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin",
+    "LC_IDENTIFICATION": "it_IT.UTF-8",
+    "LC_TIME": "it_IT.UTF-8",
+    "COLORTERM": "truecolor",
+    "TERM": "xterm-256color",
+    "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:",
+    "MAIL": "/var/mail/root",
+    "LOGNAME": "root",
+    "USER": "root",
+    "USERNAME": "root",
+    "SHELL": "/usr/bin/zsh",
+    "SUDO_COMMAND": "/usr/local/bin/ionic cordova build android --verbose",
+    "SUDO_USER": "palace22",
+    "SUDO_UID": "1000",
+    "SUDO_GID": "1000",
+    "DEBUG": "*",
+    "IONIC_CLI_BIN": "/usr/local/lib/node_modules/ionic/bin/ionic",
+    "IONIC_CLI_LIB": "/usr/local/lib/node_modules/ionic",
+    "IONIC_CLI_LOCAL_ERROR": "LOCAL_CLI_NOT_FOUND",
+    "FORCE_COLOR": "1",
+    "BROWSERSLIST_IGNORE_OLD_DATA": "1",
+    "WEBPACK_DEV_SERVER": "true",
+    "JEST_WORKER_ID": "7"
+  },
+  "userLimits": {
+    "core_file_size_blocks": {
+      "soft": 0,
+      "hard": "unlimited"
+    },
+    "data_seg_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "file_size_blocks": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_locked_memory_bytes": {
+      "soft": 16777216,
+      "hard": 16777216
+    },
+    "max_memory_size_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "open_files": {
+      "soft": 1048576,
+      "hard": 1048576
+    },
+    "stack_size_bytes": {
+      "soft": 8388608,
+      "hard": "unlimited"
+    },
+    "cpu_time_seconds": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    },
+    "max_user_processes": {
+      "soft": 63234,
+      "hard": 63234
+    },
+    "virtual_memory_kbytes": {
+      "soft": "unlimited",
+      "hard": "unlimited"
+    }
+  },
+  "sharedObjects": [
+    "linux-vdso.so.1",
+    "/lib/x86_64-linux-gnu/libdl.so.2",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6",
+    "/lib/x86_64-linux-gnu/libm.so.6",
+    "/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "/lib/x86_64-linux-gnu/libpthread.so.0",
+    "/lib/x86_64-linux-gnu/libc.so.6",
+    "/lib64/ld-linux-x86-64.so.2"
+  ]
+}

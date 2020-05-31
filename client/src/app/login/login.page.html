@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-grid style="height: 40%;">
+    <ion-row class="fullheight xc">
+      <img src="../../assets/ApPichetto-logo.svg" />
+    </ion-row>
+    <ion-col>
+      <ion-row class=" xc">
+        <ion-item>
+          <ion-input [(ngModel)]="username" type="text" placeholder="Username"></ion-input>
+        </ion-item>
+      </ion-row>
+      <ion-row class=" xc">
+        <ion-item>
+          <ion-input [(ngModel)]="password" type="password" placeholder="Password"></ion-input>
+        </ion-item>
+      </ion-row>
+      <ion-row class="xc">
+        <ion-button (click)="login()">
+          Login
+        </ion-button>
+      </ion-row>
+      <ion-row class="xc">
+        <ion-button (click)="signin()">
+          Signin
+        </ion-button>
+      </ion-row>
+    </ion-col>
+  </ion-grid>
+</ion-content>

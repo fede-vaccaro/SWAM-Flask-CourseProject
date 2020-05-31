@@ -1,0 +1,35 @@
+<!--<h3>YOU PAY!!!!!</h3>-->
+<!--<ion-img [src]="'https://cdn.corrieredellosport.it/images/2018/04/11/232225757-daa6d105-d3cc-4139-bef5-71817a98362f.jpg'"></ion-img>-->
+<div *ngIf="!showSuccess && !showSpinner">
+  <ion-header style="padding: 5%; text-align: center">{{ debtSelected ? 'Pay this ticket to ' : 'Mark this ticket as paid to ' }}<b>{{ friend.username }}</b></ion-header>
+  <ion-list style="padding-left: 5%">
+    <ion-list-header lines="none">Summary:</ion-list-header>
+    <ion-text>
+      Cost: -{{ this.ticket.totalPrice.toFixed(2) }}€<br>
+    </ion-text>
+<!--    <ion-text color="success">-->
+<!--      Credit: +{{ this.credit }}€<br>-->
+<!--    </ion-text>-->
+    <ion-item-divider></ion-item-divider>
+<!--    <ion-text>-->
+<!--      Total = {{ this.total }}€-->
+<!--    </ion-text>-->
+  </ion-list>
+  <ion-grid style="padding-left: 5%">
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="this.popoverController.dismiss()">Cancel</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="pay()">Confirm</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+<div *ngIf="showSpinner" style="padding:100px">
+  <ion-spinner></ion-spinner>
+</div>
+
+<div *ngIf="showSuccess">
+  <ion-header style="padding: 40px;"><ion-text><b>The ticket of {{ friend.username }} has been paid!</b></ion-text></ion-header>
+</div>

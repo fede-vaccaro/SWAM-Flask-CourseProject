@@ -1,0 +1,25 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Camera scan
+    </ion-title>
+    <ion-label>This is a beta features</ion-label>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-button (click)="selectPhoto()">Select photo</ion-button>
+  <ion-button (click)="scanPhoto()">Scan photo</ion-button>
+
+  <img [src]="selectedPhoto" *ngIf="selectedPhoto" />
+
+  <ion-item *ngIf="attend">
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  </ion-item>
+  <ion-card *ngIf="scannedPhotoText !== undefined">
+    <ion-card-header>Image text</ion-card-header>
+    <ion-card-content>{{ scannedPhotoText }}</ion-card-content>
+  </ion-card>
+</ion-content>

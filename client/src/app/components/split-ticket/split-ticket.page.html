@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Add new ticket
+    </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid [fixed]="true">
+    <ion-row>
+      <ion-col size="4">Name</ion-col>
+      <ion-col size="2">Quantity</ion-col>
+      <ion-col size="2">Price</ion-col>
+      <ion-col size="2">Participant</ion-col>
+      <ion-col size="2">Edit</ion-col>
+    </ion-row>
+    <app-ticket-product
+      *ngFor="let product of ticket.products; index as index"
+      [product]="product"
+      [participants]="participants"
+      (deleteProductChange)="deleteProduct(index, $event)"
+    ></app-ticket-product>
+  </ion-grid>
+  <ion-grid [fixed]="true">
+    <ion-row class="new-product">
+      <ion-col size="4">
+        <ion-input
+          [(ngModel)]="newProduct.name"
+          placeholder="name"
+          type="text"
+        ></ion-input>
+      </ion-col>
+      <ion-col size="2">
+        <ion-input
+          [(ngModel)]="newProduct.quantity"
+          placeholder="quantity"
+          type="number"
+        ></ion-input>
+      </ion-col>
+      <ion-col size="2">
+        <ion-input
+          [(ngModel)]="newProduct.price"
+          placeholder="price"
+          type="number"
+        ></ion-input>
+      </ion-col>
+      <ion-col size="4">
+        <ion-fab-button color="dark" [disabled]="!productIsReady()">
+          <ion-icon (click)="addProduct()" name="add" size="large"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-button
+  slot="bottom"
+  color="dark"
+  expand="block"
+  [disabled]="ticket.products.length===0"
+  (click)="saveTicket()"
+  >SAVE</ion-button
+>

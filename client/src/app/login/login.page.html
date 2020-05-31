@@ -10,26 +10,24 @@
       <img src="../../assets/ApPichetto-logo.svg" />
     </ion-row>
     <ion-col>
-      <ion-row>
-        <ion-input
-          [(ngModel)]="username"
-          type="text"
-          placeholder="Username"
-        ></ion-input>
+      <ion-row class=" xc">
+        <ion-item>
+          <ion-input [(ngModel)]="username" type="text" placeholder="Username"></ion-input>
+        </ion-item>
       </ion-row>
-      <ion-row>
-        <ion-input
-          [(ngModel)]="password"
-          type="password"
-          placeholder="Password"
-        ></ion-input>
+      <ion-row class=" xc">
+        <ion-item>
+          <ion-input [(ngModel)]="password" type="password" placeholder="Password"></ion-input>
+        </ion-item>
       </ion-row>
-      <ion-row class="fullheight xc">
+      <ion-row class="xc">
         <ion-button (click)="login()">
           Login
         </ion-button>
-        <ion-button (click)="test()">
-          TEST
+      </ion-row>
+      <ion-row class="xc">
+        <ion-button (click)="signin()">
+          Signin
         </ion-button>
       </ion-row>
     </ion-col>

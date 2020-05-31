@@ -25,6 +25,11 @@ export class LoginService {
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
+  signin(user: User) {
+    return this.http.post<any>(`${environment.serverUrl}/users`, user)
+      .pipe(first())
+  }
+
   login(user: User) {
     return this.http.post<any>(`${environment.serverUrl}/auth`, user)
       .pipe(
@@ -52,10 +57,4 @@ export class LoginService {
     return this.currentUserSubject.value
   }
 
-  test() {
-    this.http.get(`${environment.serverUrl}/users`).pipe(
-      map(user => {
-        console.log(user)
-      })).toPromise()
-  }
 }

@@ -88,7 +88,6 @@ export class StatusPage {
     }
 
     goToFriendTickets(friend: User) {
-        console.log(friend);
         this.router.navigateByUrl('tabs/status/friend-tickets', { state: { friend: friend } });
     }
 

@@ -24,8 +24,6 @@ export class DebtTicketPipe implements PipeTransform {
         }
       )
     });
-    console.log(dbDebtTickets)
-    console.log(debtTickets)
     return debtTickets;
   }
 

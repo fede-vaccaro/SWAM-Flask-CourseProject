@@ -97,7 +97,7 @@ export class FriendSlideComponent implements OnInit {
             component: PayticketPopoverComponent,
             event: ev,
             // componentProps: {total: this.total, debt: this.debt, credit: this.credit, friend: this.selectedFriend},
-            componentProps: {ticket: ticket, friend: this.friend, debtSelected: this.debtSelected},
+            componentProps: {ticket: ticket, friend: this.friend, debtSelected: this.debtSelected, parent: this},
             translucent: true,
         });
         return await popover.present();

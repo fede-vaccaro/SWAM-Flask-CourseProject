@@ -64,7 +64,6 @@ export class FriendTicketsComponent implements AfterViewInit {
     }
 
     changeSegmentFromSlide(ev: any) {
-        console.log(ev);
         let currentIndex: string;
         this.slides.getActiveIndex().then(i => {
             currentIndex = i.toString();

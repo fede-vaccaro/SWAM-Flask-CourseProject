@@ -18,20 +18,20 @@ export class NotificationPopoverComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.messagesRepositoryService.retrieveLoggedUserInbox().then(obs => {
-            this.messagesObs = obs;
-            this.messagesObs.subscribe(messagesArray => {
-                this.messages = messagesArray.reverse();
-                // messagesArray.forEach(m => this.messagesRepositoryService.setMessageAsDisplayed(m));
-            });
-        });
+        // this.messagesRepositoryService.retrieveLoggedUserInbox().then(obs => {
+        //     this.messagesObs = obs;
+        //     this.messagesObs.subscribe(messagesArray => {
+        //         this.messages = messagesArray.reverse();
+        //         // messagesArray.forEach(m => this.messagesRepositoryService.setMessageAsDisplayed(m));
+        //     });
+        // });
 
     }
 
     ionViewWillLeave() {
-        if (this.messages !== undefined) {
-            this.messages.forEach(m => this.messagesRepositoryService.setMessageAsDisplayed(m));
-        }
+        // if (this.messages !== undefined) {
+        //     this.messages.forEach(m => this.messagesRepositoryService.setMessageAsDisplayed(m));
+        // }
     }
 
     delete(message: InboxMessage) {

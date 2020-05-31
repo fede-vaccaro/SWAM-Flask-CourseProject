@@ -77,7 +77,6 @@ export class FriendTicketsComponent implements AfterViewInit {
         this.getInfoFromCurrentSlide();
     }
 
-
     getInfoFromCurrentSlide() {
         const friendSlideComponent = this.friendSlide;
 
@@ -98,7 +97,7 @@ export class FriendTicketsComponent implements AfterViewInit {
         const popover = await this.popoverController.create({
             component: PayPopoverComponent,
             event: ev,
-            componentProps: {total: this.total, debt: this.debt, credit: this.credit, friend: this.friend},
+            componentProps: { total: this.total, debt: this.debt, credit: this.credit, friend: this.friend, parent: this, friendSlide: this.friendSlide },
             translucent: true,
         });
         return await popover.present();

@@ -10,7 +10,7 @@ import { MessagesRepositoryService } from '../../../../../repositories/messages-
     templateUrl: './payticket-popover.component.html',
     styleUrls: ['./payticket-popover.component.scss'],
 })
-export class PayticketPopoverComponent implements OnInit {
+export class PayticketPopoverComponent{
 
     showSpinner = false;
     showSuccess = false;
@@ -25,9 +25,6 @@ export class PayticketPopoverComponent implements OnInit {
         this.ticket = navParams.get('ticket');
         this.friend = navParams.get('friend');
         this.debtSelected = navParams.get('debtSelected');
-    }
-
-    ngOnInit() {
     }
 
     pay() {

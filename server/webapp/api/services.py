@@ -59,8 +59,8 @@ class TicketService:
             # eventually, it creates a new accounting with totalPrice equal to 0 while conserving paidPrice
             for user in old_accountings_dict.keys():
                 if (
-                    user not in new_accountings_dict.keys()
-                    and old_accountings_dict[user].paidPrice > 0.0
+                        user not in new_accountings_dict.keys()
+                        and old_accountings_dict[user].paidPrice > 0.0
                 ):
                     # transfer the old accounting to the new map
                     accounting = old_accountings_dict[user]
@@ -174,8 +174,8 @@ class TicketService:
             ticket_set.add(accounting.ticket)
         tickets = (
             Ticket.query.filter(Ticket.id.in_(ticket_set))
-            .order_by(Ticket.timestamp.desc())
-            .all()
+                .order_by(Ticket.timestamp.desc())
+                .all()
         )
         return tickets
 
@@ -224,18 +224,29 @@ class AccountingService:
         return Accounting.query.filter_by(user_from=logged_user.id).all()
 
     @staticmethod
+    def _filter_non_owned_items(user_id, ticket):
+        user = User.query.get(user_id)
+        ticket.items = filter(lambda x: user in x.participants, ticket.items)
+
+    @staticmethod
     def get_debt_accountings_of(id):
         logged_user = UserService.get_logged_user()
-        return Accounting.query.filter_by(
+        accountings = Accounting.query.filter_by(
             user_from=id, user_to=logged_user.id, paidPrice=0.0
         ).all()
+        for accounting in accountings:
+            AccountingService._filter_non_owned_items(id, accounting.ticketRef)
+        return accountings
 
     @staticmethod
     def get_credits_accountings_of(id):
         logged_user = UserService.get_logged_user()
-        return Accounting.query.filter_by(
+        accountings = Accounting.query.filter_by(
             user_from=logged_user.id, user_to=id, paidPrice=0.0
         ).all()
+        for accounting in accountings:
+            AccountingService._filter_non_owned_items(id, accounting.ticketRef)
+        return accountings
 
     @staticmethod
     def pay_debt_accounting(id):

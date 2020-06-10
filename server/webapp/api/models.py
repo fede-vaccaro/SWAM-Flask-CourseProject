@@ -26,9 +26,12 @@ class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.now)
-
-    items = db.relationship('Item', backref='tickets', lazy='dynamic', cascade='save-update, delete')
-    accountings = db.relationship('Accounting', backref='accountings', lazy='dynamic', cascade='save-update, delete')
+    
+    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'))	
+   
+    buyer = db.relationship('User', backref='buyer', foreign_keys=buyer_id)
+    items = db.relationship('Item', backref='tickets', lazy='select', cascade='save-update, delete')
+    accountings = db.relationship('Accounting', backref='accountings', lazy='select', cascade='save-update, delete')
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)
@@ -67,10 +70,10 @@ class Item(db.Model):
     price = db.Column(db.Float(), nullable=False)
     quantity = db.Column(db.Integer(), default=1)
 
-    ticket = db.Column(db.Integer(), db.ForeignKey('tickets.id'))
+    ticket = db.Column(db.Integer(), db.ForeignKey('tickets.id'), nullable=False)
     participants = db.relationship('User',
-                                   secondary='user_items',
-                                   backref=db.backref('items', lazy='dynamic')
+                                   secondary='users_items',
+                                   backref=db.backref('items', lazy='select')
                                    )
 
     def add_participants(self, *participants):
@@ -102,7 +105,7 @@ class Item(db.Model):
         return item_dict
 
 
-items = db.Table('user_items',
+users_items = db.Table('users_items',
                  db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
                  db.Column('items_id', db.Integer, db.ForeignKey('items.id'))
                  )

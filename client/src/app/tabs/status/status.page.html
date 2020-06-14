@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Your status</ion-title>
-    <div
+    <!-- <div
       style="padding-right: 4%;"
       slot="end"
       (click)="presentNotificationPopover($event)"
@@ -13,8 +13,8 @@
         ><span *ngIf="newMessages !== 0"
           >{{ this.newMessages }}</span
         ></ion-badge
-      > -->
-    </div>
+      > 
+    </div> -->
   </ion-toolbar>
 </ion-header>
 
@@ -41,9 +41,9 @@
         <ion-item
           button
         >
-          <ion-avatar item-start>
+          <!-- <ion-avatar item-start>
             <ion-img [src]="friend.photoUrl"></ion-img>
-          </ion-avatar>
+          </ion-avatar> -->
           <ion-item style="--ion-border-color: transparent;"
             >{{ friend.username }}</ion-item
           >

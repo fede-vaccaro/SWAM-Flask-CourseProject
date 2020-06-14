@@ -1,8 +1,8 @@
 <ion-row *ngIf="!selected">
-  <ion-col [size]="!viewMode ? 4 : 4">{{ product.name }}</ion-col>
-  <ion-col [size]="!viewMode ? 2 : 4">{{ product.quantity }}</ion-col>
-  <ion-col [size]="!viewMode ? 2 : 4">{{ product.price }}</ion-col>
-  <ion-col [size]="!viewMode ? 2 : 0">
+  <ion-col [size]="!viewMode ? 4 : 3">{{ product.name }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 3">{{ product.quantity }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 3">{{ product.price }}</ion-col>
+  <ion-col [size]="!viewMode ? 2 : 3" >
     <ion-fab-button
       color="dark"
       [hidden]="viewMode"

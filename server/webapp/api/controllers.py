@@ -147,7 +147,15 @@ class DebtAPI(Resource):
     @marshal_with(fields.accounting_fields)
     def get(self, id):
         accountings = AccountingService.get_debt_accountings_of(id)
-        print(accountings)
+        return accountings
+
+class DebtPaidAPI(Resource):
+    resource_path = "/debt-paid"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_paid_debt_accountings()
         return accountings
 
 
@@ -198,6 +206,14 @@ class CreditPaidAPI(Resource):
         accounting = AccountingService.mark_credit_accounting_paid(id)
         return accounting
 
+class MyTicketAPI(Resource):
+    resource_path = "/my-ticket"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_logged_user_yourself_accountings()
+        return accountings
 
 class TicketAPI(Resource):
     resource_path = "/ticket/<int:id>"

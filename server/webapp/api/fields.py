@@ -39,7 +39,7 @@ accounting_fields = {
     Accounting.id.key: fields.Integer(),
     Accounting.totalPrice.key: fields.Float(),
     Accounting.paidPrice.key: fields.Float(),
-    'ticketRef': fields.Nested(small_items_ticket_fields),
+    'ticket': fields.Nested(small_items_ticket_fields),
     'userFrom': fields.Nested(user_fields),
     'userTo': fields.Nested(user_fields),
 }
@@ -50,3 +50,5 @@ ticket_fields = {
     'items': fields.List(fields.Nested(item_fields)),
     'accountings': fields.List(fields.Nested(small_accounting_fields))
 }
+
+

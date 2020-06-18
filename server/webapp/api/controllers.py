@@ -153,7 +153,7 @@ class CreditAPI(Resource):
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accountings = AccountingService.get_credits_accountings_of(id)
+        accountings = AccountingService.get_credit_accountings_of(id)
         return accountings
 
 

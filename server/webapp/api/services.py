@@ -237,17 +237,17 @@ class AccountingService:
             user_from=id, user_to=logged_user.id, paidPrice=0.0
         ).all()
         for accounting in accountings:
-            AccountingService._filter_non_owned_items(id, accounting.ticketRef)
+            AccountingService._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
     @staticmethod
-    def get_credits_accountings_of(id):
+    def get_credit_accountings_of(id):
         logged_user = UserService.get_logged_user()
         accountings = Accounting.query.filter_by(
             user_from=logged_user.id, user_to=id, paidPrice=0.0
         ).all()
         for accounting in accountings:
-            AccountingService._filter_non_owned_items(id, accounting.ticketRef)
+            AccountingService._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
     @staticmethod

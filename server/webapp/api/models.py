@@ -30,7 +30,7 @@ class Ticket(db.Model):
     buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
    
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
-    items = db.relationship('Item', backref='ticket', lazy='select', cascade='save-update, delete')
+    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete')
     accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete')
 
     def __repr__(self):
@@ -49,7 +49,6 @@ class Accounting(db.Model):
 
     userTo = db.relationship('User', foreign_keys=user_to)
     userFrom = db.relationship('User', foreign_keys=user_from)
-    # ticketRef = db.relationship('Ticket', backref='accountings', foreign_keys=ticket)
 
     def __repr__(self):
         return "<Accounting paidPrice: '{}', totalPrice: '{}', userFrom: '{}', userTo: '{}'".format(

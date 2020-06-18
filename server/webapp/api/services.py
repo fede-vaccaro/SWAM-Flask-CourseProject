@@ -224,6 +224,11 @@ class AccountingService:
         return Accounting.query.filter_by(user_from=logged_user.id).all()
 
     @staticmethod
+    def get_logged_user_yourself_accountings():
+        logged_user = UserService.get_logged_user()
+        return Accounting.query.filter_by(user_from=logged_user.id, user_to=logged_user.id).all()
+
+    @staticmethod
     def _filter_non_owned_items(user_id, ticket):
         user = User.query.get(user_id)
         ticket.items = filter(lambda x: user in x.participants, ticket.items)
@@ -237,6 +242,15 @@ class AccountingService:
         for accounting in accountings:
             AccountingService._filter_non_owned_items(id, accounting.ticketRef)
         return accountings
+
+    @staticmethod
+    def get_paid_debt_accountings():
+        logged_user = UserService.get_logged_user()
+        accountings = Accounting.query.filter(
+            Accounting.user_to==logged_user.id, 0.0 < Accounting.paidPrice
+        ).all()
+        return accountings
+
 
     @staticmethod
     def get_credits_accountings_of(id):

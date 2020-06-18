@@ -128,6 +128,15 @@ class CreditsAPI(Resource):
         accountings = AccountingService.get_all_credits_accountings()
         return accountings
 
+class DebtPaidAPI(Resource):
+    resource_path = "/debt-paid"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_paid_debt_accountings()
+        return accountings
+
 
 class DebtAPI(Resource):
     resource_path = "/debt/<int:id>"
@@ -178,6 +187,16 @@ class CreditPaidAPI(Resource):
     def get(self, id):
         accounting = AccountingService.mark_credit_accounting_paid(id)
         return accounting
+
+
+class MyTicketAPI(Resource):
+    resource_path = "/my-ticket"
+
+    @jwt_required
+    @marshal_with(fields.accounting_fields)
+    def get(self):
+        accountings = AccountingService.get_logged_user_yourself_accountings()
+        return accountings
 
 
 class TicketAPI(Resource):

@@ -29,8 +29,8 @@ export class TicketService {
 
     async save(ticket: Ticket) {
         if (ticket.id === undefined)
-            return this.http.post(`${environment.serverUrl}/tickets`, { items: ticket.products }).pipe(first()).toPromise()
-        return this.http.patch(`${environment.serverUrl}/ticket/${ticket.id}`, { items: ticket.products }).pipe(first()).toPromise()
+            return await this.http.post(`${environment.serverUrl}/tickets`, { items: ticket.products }).pipe(first()).toPromise()
+        return await this.http.patch(`${environment.serverUrl}/ticket/${ticket.id}`, { items: ticket.products }).pipe(first()).toPromise()
     }
 
     getTicketsOfLoggedUser(): Observable<Ticket[]> {
@@ -53,21 +53,14 @@ export class TicketService {
             .pipe(map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
-    async getPaidTicketsOfLoggedUser(): Promise<DebtTicket[]> {
-        const loggedUser: User = await this.loginService.getLoggedUser();
-        const loggedUserFriends: UserFriends = await this.userFriendsService.getUserFriends().toPromise()
-        return await Promise.all(
-            loggedUserFriends.friends.map(
-                async friend => {
-                    return await this.ticketRepositoryService.getPaidDebtTicketsOf(loggedUser, friend).pipe(first()).toPromise();
-                })).then(paidTicketFriend => {
-                    return [].concat.apply([], paidTicketFriend) as DebtTicket[];
-                });
+    getPaidTickets(): Observable<DebtTicket[]> {
+        return this.http.get(`${environment.serverUrl}/debt-paid`)
+            .pipe(map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
-    async getPartialTicketsOfLoggedUser(): Promise<DebtTicket[]> {
-        const loggedUser: User = await this.loginService.getLoggedUser();
-        return await this.ticketRepositoryService.getDebtTicketsOf(loggedUser, loggedUser).pipe(first()).toPromise();
+    getPartialTicketsOfLoggedUser(): Observable<DebtTicket[]> {
+        return this.http.get(`${environment.serverUrl}/my-ticket`)
+            .pipe(map(debtsTicket => this.debtTicketPipe.transform(debtsTicket)))
     }
 
     async payAllDebtTicketTo(receivingUser: User) {

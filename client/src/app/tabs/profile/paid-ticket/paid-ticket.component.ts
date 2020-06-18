@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DebtTicket } from 'src/app/models/ticket';
 import { TicketService } from 'src/app/services/ticket.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-paid-ticket',
@@ -9,6 +10,7 @@ import { TicketService } from 'src/app/services/ticket.service';
 })
 export class PaidTicketComponent implements OnInit {
 
+  paidTicketObs: Observable<DebtTicket[]>
   paidTickets: DebtTicket[]
   selectedTicketTimestamp: number
 
@@ -17,7 +19,8 @@ export class PaidTicketComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.paidTickets = await this.ticketService.getPaidTicketsOfLoggedUser()
+    this.paidTicketObs = this.ticketService.getPaidTickets()
+    this.paidTicketObs.subscribe(paidTickets => this.paidTickets = paidTickets)
   }
 
   getDate(date: string) {

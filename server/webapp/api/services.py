@@ -21,6 +21,8 @@ class TicketService:
         for accounting in accountings_list:
             ticket.accountings.append(accounting)
 
+        ticket.buyer_id = get_jwt_identity()
+
         db.session.add(ticket)
         db.session.commit()
 

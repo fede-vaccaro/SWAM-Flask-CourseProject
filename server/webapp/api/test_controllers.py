@@ -62,7 +62,7 @@ class TestUsersAPI(APITest):
         data = {'username': username,
                 'password': password}
         encoded = self.encoder.encode(data)
-        response = self.client.post('api' + ctl.UserListAPI.resource_path, headers=self.content_type, data=encoded)
+        response = self.client.post('api' + ctl.UsersAPI.resource_path, headers=self.content_type, data=encoded)
         return response
 
     def test_UsersList_get_all(self):
@@ -76,7 +76,7 @@ class TestUsersAPI(APITest):
 
         auth_header = {'Authorization': 'Bearer {}'.format(token)}
 
-        response = self.client.get('api' + ctl.UserListAPI.resource_path,
+        response = self.client.get('api' + ctl.UsersAPI.resource_path,
                                    headers=dict(self.content_type, **auth_header))
 
         json_response = json.loads(response.data)

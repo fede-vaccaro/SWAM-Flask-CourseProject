@@ -50,3 +50,5 @@ ticket_fields = {
     'items': fields.List(fields.Nested(item_fields)),
     'accountings': fields.List(fields.Nested(small_accounting_fields))
 }
+
+

@@ -15,7 +15,7 @@ def noAuth():
     raise exc.BadRequest('Missing authentication header.')
 
 
-class UserListAPI(Resource):
+class UsersAPI(Resource):
     resource_path = '/users'
 
     @jwt_required
@@ -99,7 +99,14 @@ class TicketsAPI(Resource):
 
         items = args['items']
 
-        new_ticket = TicketService.add_ticket(items)
+        try:
+            new_ticket = TicketService.add_ticket(items)
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            error = str(error.orig) + " for parameters" + str(error.params)
+            print("An error occurred with the DB.", error)
+            raise exc.InternalServerError(str(error))
+
         return new_ticket, status.HTTP_201_CREATED
 
     @jwt_required

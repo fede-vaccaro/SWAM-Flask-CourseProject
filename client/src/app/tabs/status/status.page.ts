@@ -7,10 +7,8 @@ import {UserFriends} from 'src/app/models/user-friends';
 import {UserFriendsService} from 'src/app/services/user-friends.service';
 import {InboxMessage} from '../../models/inbox-message';
 import {DebtTicket} from '../../models/ticket';
-import {MessagesRepositoryService} from '../../repositories/messages-repository.service';
 import {LoginService} from '../../services/login.service';
 import {TicketService} from '../../services/ticket.service';
-import {NotificationPopoverComponent} from './notification-popover/notification-popover.component';
 
 
 @Component({
@@ -43,7 +41,7 @@ export class StatusPage {
                 private loginService: LoginService,
                 private router: Router,
                 private popoverController: PopoverController,
-                private messagesRepositoryService: MessagesRepositoryService) {
+) {
     }
 
     updateTotals(user: User) {
@@ -92,15 +90,4 @@ export class StatusPage {
     goToFriendTickets(friend: User) {
         this.router.navigateByUrl('tabs/status/friend-tickets', {state: {friend: friend}});
     }
-
-    async presentNotificationPopover(ev: any) {
-        const popover = await this.popoverController.create({
-            component: NotificationPopoverComponent,
-            event: ev,
-            translucent: true,
-        });
-
-        return popover.present();
-    }
-
 }

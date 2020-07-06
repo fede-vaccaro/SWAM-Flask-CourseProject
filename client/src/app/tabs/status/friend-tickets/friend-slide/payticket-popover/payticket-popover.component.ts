@@ -3,7 +3,6 @@ import { NavParams, PopoverController } from '@ionic/angular';
 import { DebtTicket } from '../../../../../models/ticket';
 import { User } from '../../../../../models/user';
 import { TicketService } from '../../../../../services/ticket.service';
-import { MessagesRepositoryService } from '../../../../../repositories/messages-repository.service';
 
 @Component({
     selector: 'app-payticket-popover',
@@ -21,7 +20,7 @@ export class PayticketPopoverComponent{
     private friend: User;
     private parent
 
-    constructor(private navParams: NavParams, private popoverController: PopoverController, private ticketService: TicketService, private messagesRepositoryService: MessagesRepositoryService) {
+    constructor(private navParams: NavParams, private popoverController: PopoverController, private ticketService: TicketService) {
         this.ticket = navParams.get('ticket');
         this.friend = navParams.get('friend');
         this.debtSelected = navParams.get('debtSelected');

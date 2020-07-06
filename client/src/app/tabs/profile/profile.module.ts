@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { LoginService } from 'src/app/services/login.service';
 import { UserFriendsService } from 'src/app/services/user-friends.service';
-import { AddFriendsPopoverComponent } from './friends-list/add-friends-popover/add-friends-popover.component';
 import { FriendsListComponent } from './friends-list/friends-list.component';
 import { ProfilePage } from './profile.page';
 import { TicketPreviewComponent } from 'src/app/components/ticket-preview/ticket-preview.component';
@@ -26,7 +25,6 @@ import { MyTicketComponent } from './my-ticket/my-ticket.component';
   declarations: [
     ProfilePage,
     FriendsListComponent,
-    AddFriendsPopoverComponent,
     TicketHistoryComponent,
     TicketPreviewComponent,
     SplitTicketPage,

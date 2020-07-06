@@ -1,9 +1,7 @@
 
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/models/user';
-import { UserRepositoryService } from 'src/app/repositories/user-repository.service';
 import { UserFriendsService } from 'src/app/services/user-friends.service';
-import { LoginService } from 'src/app/services/login.service';
 import { UserFriends } from 'src/app/models/user-friends';
 import { Observable } from 'rxjs';
 

@@ -4,11 +4,7 @@ import { Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { DebtTicket, Ticket } from '../models/ticket';
 import { User } from '../models/user';
-import { UserFriends } from '../models/user-friends';
-import { MessagesRepositoryService } from '../repositories/messages-repository.service';
-import { TicketRepositoryService } from '../repositories/ticket-repository.service';
 import { LoginService } from './login.service';
-import { UserFriendsService } from './user-friends.service';
 import { environment } from 'src/environments/environment';
 import { LoggedUserTicketPipe } from '../pipe/logged-user-ticket.pipe';
 import { DebtTicketPipe } from '../pipe/debt-ticket.pipe';
@@ -22,9 +18,7 @@ export class TicketService {
         private http: HttpClient,
         private loggedUserTicketPipe: LoggedUserTicketPipe,
         private debtTicketPipe: DebtTicketPipe,
-        private ticketRepositoryService: TicketRepositoryService,
         private loginService: LoginService,
-        private userFriendsService: UserFriendsService,
     ) { }
 
     async save(ticket: Ticket) {
@@ -39,8 +33,8 @@ export class TicketService {
     }
 
     getPassedTicketsOfLoggedUser(): Observable<Ticket[]> {
-        let loggedUser = this.loginService.getLoggedUser()
-        return this.ticketRepositoryService.getPassedTicketsOf(loggedUser);
+        return this.http.get(`${environment.serverUrl}/tickets`)
+            .pipe(first(), map(tickets => this.loggedUserTicketPipe.transform(tickets)))
     }
 
     getDebtTicketsOf(user: User): Observable<DebtTicket[]> {

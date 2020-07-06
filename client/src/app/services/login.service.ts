@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { auth } from 'firebase';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, first } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -14,7 +13,6 @@ export class LoginService {
   currentUserSubject: BehaviorSubject<User>;
   currentUser: Observable<User>;
 
-  googleProvider: auth.GoogleAuthProvider
   loadingUser = new EventEmitter<boolean>()
 
   constructor(

@@ -1,20 +1,6 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Your status</ion-title>
-    <!-- <div
-      style="padding-right: 4%;"
-      slot="end"
-      (click)="presentNotificationPopover($event)"
-    >
-      <ion-fab-button style="z-index: 1;">
-        <ion-icon name="notifications-outline" size="large"></ion-icon>
-      </ion-fab-button>
-      <!-- <ion-badge color="danger" *ngIf="this.inboxMessagesObs | async"
-        ><span *ngIf="newMessages !== 0"
-          >{{ this.newMessages }}</span
-        ></ion-badge
-      > 
-    </div> -->
   </ion-toolbar>
 </ion-header>
 
@@ -41,9 +27,6 @@
         <ion-item
           button
         >
-          <!-- <ion-avatar item-start>
-            <ion-img [src]="friend.photoUrl"></ion-img>
-          </ion-avatar> -->
           <ion-item style="--ion-border-color: transparent;"
             >{{ friend.username }}</ion-item
           >

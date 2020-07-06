@@ -14,7 +14,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FirebaseDebtTicketPipe } from './pipe/firebase-debt-ticket.pipe';
 import { FirebaseTicketPipe } from './pipe/firebase-ticket.pipe';
-import { MessagesRepositoryService } from './repositories/messages-repository.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UserFriendsPipe } from './pipe/user-friends.pipe';
@@ -42,7 +41,6 @@ import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
         LoggedUserTicketPipe,
         DebtTicketPipe,
         Camera,
-        MessagesRepositoryService,
         UserFriendsPipe,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

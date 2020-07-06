@@ -12,17 +12,6 @@ export class Ticket {
     paidPrice?: number;
 }
 
-export class TicketFirebase {
-    id?: string;
-    timestamp?: number;
-    owner?: User;
-    products;
-    participants?;
-    market?: string;
-    totalPrice?: number;
-    paidPrice?: number;
-}
-
 export class DebtTicket {
     id?: string;
     timestamp?: number;
@@ -33,15 +22,3 @@ export class DebtTicket {
     totalPrice?: number;
     paidPrice?: number;
 }
-
-export class DebtTicketFirebase {
-    id?: string;
-    timestamp?: number;
-    owner?: User;
-    products;
-    participant: User;
-    market?: string;
-    totalPrice?: number;
-    paidPrice?: number;
-}
-

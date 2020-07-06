@@ -12,8 +12,6 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FirebaseDebtTicketPipe } from './pipe/firebase-debt-ticket.pipe';
-import { FirebaseTicketPipe } from './pipe/firebase-ticket.pipe';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UserFriendsPipe } from './pipe/user-friends.pipe';
@@ -21,7 +19,7 @@ import { LoggedUserTicketPipe } from './pipe/logged-user-ticket.pipe';
 import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
 
 @NgModule({
-    declarations: [AppComponent, FirebaseTicketPipe, FirebaseDebtTicketPipe, UserFriendsPipe, LoggedUserTicketPipe, DebtTicketPipe],
+    declarations: [AppComponent, UserFriendsPipe, LoggedUserTicketPipe, DebtTicketPipe],
     entryComponents: [],
     imports: [
         BrowserModule,
@@ -36,8 +34,6 @@ import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
         StatusBar,
         SplashScreen,
         AngularFirestore,
-        FirebaseTicketPipe,
-        FirebaseDebtTicketPipe,
         LoggedUserTicketPipe,
         DebtTicketPipe,
         Camera,

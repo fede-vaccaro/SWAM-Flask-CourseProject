@@ -23,11 +23,11 @@ $ flask shell
 ```
 ---
 ### Starting the application
-Front-end:
+Back-end:
 ```
 $ python main.py
 ```
-Back-end:
+Front-end:
 ```
 $ ionic serve
 ```

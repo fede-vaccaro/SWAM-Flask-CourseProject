@@ -25,6 +25,10 @@ export class TicketHistoryComponent implements OnInit {
     this.ticketStatus = "active"
   }
 
+  ionViewWillEnter(){
+    this.ngOnInit()
+  }
+  
   async ngOnInit() {
     this.ticketHistoryObs = this.ticketService.getTicketsOfLoggedUser()
     this.passedTicketHistoryObs = this.ticketService.getTicketsOfLoggedUser()//TODO

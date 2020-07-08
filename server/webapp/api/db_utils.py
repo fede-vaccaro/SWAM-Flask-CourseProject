@@ -6,7 +6,9 @@ from .. import db
 def transactional(commands):
     def annotation(*args):
         try:
-            commands(*args)
+            return_value = commands(*args)
+            if return_value is not None:
+                return return_value
         except SQLAlchemyError as exc:
             db.session.rollback()
 

@@ -2,6 +2,7 @@ from flask_jwt_extended import get_jwt_identity
 from injector import inject
 
 from .exceptions import TicketInputError
+from sqlalchemy.exc import SQLAlchemyError
 from .models import User, Item, Ticket, Accounting
 from .. import db
 
@@ -250,7 +251,7 @@ class AccountingService:
             user_from=id, user_to=logged_user.id, paidPrice=0.0
         ).all()
         for accounting in accountings:
-            AccountingService._filter_non_owned_items(id, accounting.ticket)
+            self._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
     def get_paid_debt_accountings(self):
@@ -266,7 +267,7 @@ class AccountingService:
             user_from=logged_user.id, user_to=id, paidPrice=0.0
         ).all()
         for accounting in accountings:
-            AccountingService._filter_non_owned_items(id, accounting.ticket)
+            self._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
     @transactional

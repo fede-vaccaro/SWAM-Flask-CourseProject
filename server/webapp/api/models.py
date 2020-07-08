@@ -30,7 +30,7 @@ class Ticket(db.Model):
     buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
 
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
-    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete')
+    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete, delete-orphan')
     accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete, '
                                                                                          'delete-orphan')
 
@@ -78,7 +78,8 @@ class Item(db.Model):
     ticket_id = db.Column(db.Integer(), db.ForeignKey('tickets.id'), nullable=False)
     participants = db.relationship('User',
                                    secondary='users_items',
-                                   lazy='select'
+                                   lazy='select',
+                                   cascade='all, delete'
                                    # backref=db.backref('items', lazy='select')
                                    )
 
@@ -112,7 +113,9 @@ class Item(db.Model):
         return item_dict
 
 
-users_items = db.Table('users_items',
-                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                       db.Column('items_id', db.Integer, db.ForeignKey('items.id'))
+items_users = db.Table('users_items',
+                       db.Column('id', db.Integer, primary_key=True),
+                       db.Column('items_id', db.Integer, db.ForeignKey('items.id')),
+                       db.Column('users_id', db.Integer, db.ForeignKey('users.id')),
+                       db.UniqueConstraint('items_id', 'users_id', name='UC_items_id_users_id'),
                        )

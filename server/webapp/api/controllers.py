@@ -213,7 +213,7 @@ class MyTicketAPI(Resource, ServicesAPI):
 
 
 class TicketAPI(Resource, ServicesAPI):
-    resource_path = '/tickets/<int:id>'
+    resource_path = '/ticket/<int:id>'
 
     @marshal_with(fields.ticket_fields)
     @jwt_required

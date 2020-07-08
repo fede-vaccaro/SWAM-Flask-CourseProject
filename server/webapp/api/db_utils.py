@@ -1,4 +1,4 @@
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from .exceptions import ApplicationDBError
 from .. import db
 
@@ -11,9 +11,18 @@ def transactional(commands):
                 return return_value
         except SQLAlchemyError as exc:
             db.session.rollback()
+            error = ""
 
-            error = str(exc.orig) + " for parameters" + str(exc.params)
+            try:
+                error = str(exc.orig) + " for parameters" + str(exc.params)
+            except:
+                pass
+
             print("An error occurred with the DB.", error)
+
+            raise ApplicationDBError
+        except IntegrityError:
+            db.session.rollback()
 
             raise ApplicationDBError
 

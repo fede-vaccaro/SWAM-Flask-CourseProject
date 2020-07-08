@@ -100,9 +100,14 @@ class TicketService:
                 items
             )
             # remove all previous items and add the new ones
-            Item.query.filter_by(ticket=ticket).delete()
+
+            for item in ticket.items:
+                item.participants = []
+
+            ticket.items = []
+
             for item in items:
-                ticket.items.append(item)
+                item.ticket = ticket
 
             # transform new_accountings from list to Map, from accounting.user_to to accounting
             new_accountings_dict = {}

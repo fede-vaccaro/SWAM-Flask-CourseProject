@@ -13,18 +13,18 @@ export class LoggedUserTicketPipe implements PipeTransform {
   transform(dbTickets): Ticket[] {
     let tickets: Ticket[] = []
     dbTickets.forEach(dbTicket => {
-        console.log(dbTicket);
-      tickets.push(
-        {
-          id: dbTicket.id,
-          market: 'Generic',
-          owner: this.loginService.getLoggedUser(),
-          products: dbTicket.items,
-          timestamp: dbTicket.timestamp,
-          totalPrice: dbTicket.items.reduce((i, j) => i + j.price * j.quantity, 0),
-          participants: [dbTicket.accountings[0].userFrom].concat(dbTicket.accountings.map(acc => acc.userTo)),
-        }
-      )
+      if (dbTicket.accountings.length !== 0)
+        tickets.push(
+          {
+            id: dbTicket.id,
+            market: 'Generic',
+            owner: this.loginService.getLoggedUser(),
+            products: dbTicket.items,
+            timestamp: dbTicket.timestamp,
+            totalPrice: dbTicket.items.reduce((i, j) => i + j.price * j.quantity, 0),
+            participants: [dbTicket.accountings[0].userFrom].concat(dbTicket.accountings.map(acc => acc.userTo)),
+          }
+        )
     });
 
     return tickets;

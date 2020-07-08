@@ -12,6 +12,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { UserFriendsPipe } from './pipe/user-friends.pipe';
 import { LoggedUserTicketPipe } from './pipe/logged-user-ticket.pipe';
 import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 @NgModule({
     declarations: [AppComponent, UserFriendsPipe, LoggedUserTicketPipe, DebtTicketPipe],
@@ -30,7 +31,9 @@ import { DebtTicketPipe } from './pipe/debt-ticket.pipe';
         Camera,
         UserFriendsPipe,
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+
     ],
     bootstrap: [AppComponent]
 })

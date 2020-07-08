@@ -3,12 +3,15 @@ from flask_restful import Api
 from flask import Blueprint
 from .controllers import AuthenticationAPI, UsersAPI, UserAPI, MyTicketAPI, TicketsAPI, TicketAPI, DebtsAPI, DebtAPI, \
     DebtPaidAPI, CreditsAPI, CreditAPI, PayDebtAPI, CreditPaidAPI, PayAllDebtsAPI
+from flask_injector import FlaskInjector
 
 blueprint_api = Blueprint(
     'api',
     __name__,
     url_prefix='/api'
 )
+
+from .dependencies import configure
 
 rest_api = Api(blueprint_api)
 jwt = JWTManager()
@@ -34,3 +37,6 @@ def create_module(app):
     rest_api.add_resource(PayAllDebtsAPI, PayAllDebtsAPI.resource_path)
     rest_api.add_resource(CreditPaidAPI, CreditPaidAPI.resource_path)
     rest_api.add_resource(CreditAPI, CreditAPI.resource_path)
+
+    FlaskInjector(app, modules=[configure])
+

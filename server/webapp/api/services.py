@@ -1,19 +1,56 @@
 from flask_jwt_extended import get_jwt_identity
+from injector import inject
 
 from .exceptions import TicketInputError
 from .models import User, Item, Ticket, Accounting
 from .. import db
 
+from .db_utils import transactional
+from abc import abstractmethod
+
+
+class UserServiceBase:
+    @abstractmethod
+    def get_logged_user(self):
+        raise NotImplementedError
+
+    def authenticate(self, username, password):
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return None
+        # Do the passwords match
+        if not user.check_password(password):
+            return None
+        return user
+
+    def add_user(self, username, password):
+        new_user = User(username=username)
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        return new_user
+
+
+class UserServiceREST(UserServiceBase):
+    def get_logged_user(self):
+        return User.query.get(get_jwt_identity())
+
 
 class TicketService:
-    @staticmethod
-    def add_ticket(item_dicts):
+    @inject
+    def __init__(self, user_service: UserServiceBase):
+        self.user_service = user_service
+
+    @transactional
+    def add_ticket(self, item_dicts):
         ticket = Ticket()
 
         (
             new_items_list,
             accountings_list,
-        ) = TicketService._generate_items_and_accountings(item_dicts)
+        ) = self._generate_items_and_accountings(item_dicts)
 
         for new_item in new_items_list:
             ticket.items.append(new_item)
@@ -21,20 +58,19 @@ class TicketService:
         for accounting in accountings_list:
             ticket.accountings.append(accounting)
 
-        ticket.buyer_id = get_jwt_identity()
+        ticket.buyer_id = self.user_service.get_logged_user().id
 
         db.session.add(ticket)
         db.session.commit()
 
         return ticket
 
-    @staticmethod
-    def update_ticket(ticket, items):
+    @transactional
+    def update_ticket(self, ticket, items):
         if ticket is not None:
-            items, new_accountings = TicketService._generate_items_and_accountings(
+            items, new_accountings = self._generate_items_and_accountings(
                 items
             )
-            print(ticket)
             # remove all previous items and add the new ones
             Item.query.filter_by(ticket=ticket.id).delete()
             for item in items:
@@ -83,12 +119,12 @@ class TicketService:
                         name="Refund ticket update",
                         price=accounting.paidPrice - accounting.totalPrice,
                     )
-                    refund.participants.append(UserService.get_logged_user())
+                    refund.participants.append(self.user_service.get_logged_user())
 
                     refund_accounting = Accounting(
                         totalPrice=refund.price,
                         user_from=user,
-                        user_to=UserService.get_logged_user().id,
+                        user_to=self.user_service.get_logged_user().id,
                     )
 
                     refund_ticket.items.append(refund)
@@ -109,8 +145,7 @@ class TicketService:
 
             return ticket
 
-    @staticmethod
-    def _generate_items_and_accountings(item_dicts):
+    def _generate_items_and_accountings(self, item_dicts):
         accountings = {}
         new_item_list = []
         for item in item_dicts:
@@ -154,7 +189,7 @@ class TicketService:
             new_item_list.append(new_item)
 
         new_accountings_list = []
-        current_user = User.query.get(get_jwt_identity())
+        current_user = self.user_service.get_logged_user()
         for participant in accountings.keys():
             new_accounting = Accounting()
 
@@ -167,9 +202,8 @@ class TicketService:
 
         return new_item_list, new_accountings_list
 
-    @staticmethod
-    def get_logged_user_tickets():
-        current_user = User.query.get(get_jwt_identity())
+    def get_logged_user_tickets(self):
+        current_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter_by(user_from=current_user.id).all()
         ticket_set = set()
         for accounting in accountings:
@@ -181,63 +215,37 @@ class TicketService:
         )
         return tickets
 
-    @staticmethod
-    def delete_ticket(ticket):
+    @transactional
+    def delete_ticket(self, ticket):
         db.session.delete(ticket)
         db.session.commit()
 
 
-class UserService:
-    @staticmethod
-    def authenticate(username, password):
-        user = User.query.filter_by(username=username).first()
-        if not user:
-            return None
-        # Do the passwords match
-        if not user.check_password(password):
-            return None
-        return user
-
-    @staticmethod
-    def get_logged_user():
-        return User.query.get(get_jwt_identity())
-
-    @staticmethod
-    def add_user(username, password):
-        new_user = User(username=username)
-        new_user.set_password(password)
-
-        db.session.add(new_user)
-        db.session.commit()
-
-        return new_user
-
-
 class AccountingService:
-    @staticmethod
-    def get_all_debts_accountings():
-        logged_user = UserService.get_logged_user()
+
+    @inject
+    def __init__(self, user_service: UserServiceBase):
+        self.user_service = user_service
+
+    def get_all_debts_accountings(self):
+        logged_user = self.user_service.get_logged_user()
 
         return Accounting.query.filter_by(user_to=logged_user.id).all()
 
-    @staticmethod
-    def get_all_credits_accountings():
-        logged_user = UserService.get_logged_user()
+    def get_all_credits_accountings(self):
+        logged_user = self.user_service.get_logged_user()
         return Accounting.query.filter_by(user_from=logged_user.id).all()
 
-    @staticmethod
-    def get_logged_user_yourself_accountings():
-        logged_user = UserService.get_logged_user()
+    def get_logged_user_yourself_accountings(self):
+        logged_user = self.user_service.get_logged_user()
         return Accounting.query.filter_by(user_from=logged_user.id, user_to=logged_user.id).all()
 
-    @staticmethod
-    def _filter_non_owned_items(user_id, ticket):
+    def _filter_non_owned_items(self, user_id, ticket):
         user = User.query.get(user_id)
         ticket.items = filter(lambda x: user in x.participants, ticket.items)
 
-    @staticmethod
-    def get_debt_accountings_of(id):
-        logged_user = UserService.get_logged_user()
+    def get_debt_accountings_of(self, id):
+        logged_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter_by(
             user_from=id, user_to=logged_user.id, paidPrice=0.0
         ).all()
@@ -245,18 +253,15 @@ class AccountingService:
             AccountingService._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
-    @staticmethod
-    def get_paid_debt_accountings():
-        logged_user = UserService.get_logged_user()
+    def get_paid_debt_accountings(self):
+        logged_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter(
-            Accounting.user_to==logged_user.id, 0.0 < Accounting.paidPrice
+            Accounting.user_to == logged_user.id, 0.0 < Accounting.paidPrice
         ).all()
         return accountings
 
-
-    @staticmethod
-    def get_credit_accountings_of(id):
-        logged_user = UserService.get_logged_user()
+    def get_credit_accountings_of(self, id):
+        logged_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter_by(
             user_from=logged_user.id, user_to=id, paidPrice=0.0
         ).all()
@@ -264,18 +269,18 @@ class AccountingService:
             AccountingService._filter_non_owned_items(id, accounting.ticket)
         return accountings
 
-    @staticmethod
-    def pay_debt_accounting(id):
-        logged_user = UserService.get_logged_user()
+    @transactional
+    def pay_debt_accounting(self, id):
+        logged_user = self.user_service.get_logged_user()
         accounting_to_pay = Accounting.query.filter_by(
             id=id, user_to=logged_user.id
         ).first()
         accounting_to_pay.paidPrice = accounting_to_pay.totalPrice
         db.session.commit()
 
-    @staticmethod
-    def pay_all_debts_accounting_to(id):
-        logged_user = UserService.get_logged_user()
+    @transactional
+    def pay_all_debts_accounting_to(self, id):
+        logged_user = self.user_service.get_logged_user()
         debts = Accounting.query.filter_by(user_from=id, user_to=logged_user.id).all()
         credits = Accounting.query.filter_by(user_from=logged_user.id, user_to=id).all()
         accountings = debts + credits
@@ -284,9 +289,9 @@ class AccountingService:
 
         db.session.commit()
 
-    @staticmethod
-    def mark_credit_accounting_paid(id):
-        logged_user = UserService.get_logged_user()
+    @transactional
+    def mark_credit_accounting_paid(self, id):
+        logged_user = self.user_service.get_logged_user()
         accounting_to_pay = Accounting.query.filter_by(
             id=id, user_from=logged_user.id
         ).first()

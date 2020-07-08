@@ -48,6 +48,10 @@ export class LoginService {
     this.router.navigate(['/login']);
   }
 
+  remove() {
+    return this.http.delete<any>(`${environment.serverUrl}/users`).pipe(first())
+  }
+
   getLoggedUser(): User {
     return JSON.parse(localStorage.getItem('currentUser')) as User
   }

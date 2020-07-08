@@ -235,9 +235,10 @@ class TicketService:
 
         return new_item_list, new_accountings_list
 
+    @transactional
     def get_logged_user_tickets(self):
         current_user = self.user_service.get_logged_user()
-        tickets = Ticket.query.filter_by(buyer=current_user).all()
+        tickets = Ticket.query.filter_by(buyer=current_user).order_by(Ticket.timestamp).all()
         return tickets
 
     @transactional

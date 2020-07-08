@@ -31,7 +31,8 @@ class Ticket(db.Model):
 
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
     items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete')
-    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete, delete-orphan')
+    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete, '
+                                                                                         'delete-orphan')
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)

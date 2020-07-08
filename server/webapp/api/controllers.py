@@ -115,11 +115,11 @@ class TicketsAPI(Resource, ServicesAPI):
         return new_ticket, status.HTTP_201_CREATED
 
 
-@jwt_required
-@marshal_with(fields.ticket_fields)
-def get(self):
-    tickets = self.ticket_service.get_logged_user_tickets()
-    return tickets
+    @jwt_required
+    @marshal_with(fields.ticket_fields)
+    def get(self):
+        tickets = self.ticket_service.get_logged_user_tickets()
+        return tickets
 
 
 class DebtsAPI(Resource, ServicesAPI):
@@ -159,7 +159,6 @@ class DebtAPI(Resource, ServicesAPI):
     @marshal_with(fields.accounting_fields)
     def get(self, id):
         accountings = self.accounting_service.get_debt_accountings_of(id)
-        print(accountings)
         return accountings
 
 

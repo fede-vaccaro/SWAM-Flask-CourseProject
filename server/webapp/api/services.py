@@ -1,5 +1,6 @@
 from flask_jwt_extended import get_jwt_identity
 from injector import inject
+from sqlalchemy import and_
 
 from .exceptions import TicketInputError
 from .models import User, Item, Ticket, Accounting
@@ -50,7 +51,6 @@ class UserServiceBase:
         db.session.commit()
         return True
 
-
     def add_user(self, username, password):
         new_user = User(username=username)
         new_user.set_password(password)
@@ -100,24 +100,23 @@ class TicketService:
                 items
             )
             # remove all previous items and add the new ones
-
             for item in ticket.items:
                 item.participants = []
-
             ticket.items = []
 
+            # set new items to the in-update ticket
             for item in items:
                 item.ticket = ticket
 
             # transform new_accountings from list to Map, from accounting.user_to to accounting
             new_accountings_dict = {}
             for accounting in new_accountings:
-                new_accountings_dict[accounting.user_to] = accounting
+                new_accountings_dict[accounting.userTo] = accounting
 
             # transform old_accountings (ticket.accountings) to Map
             old_accountings_dict = {}
             for accounting in ticket.accountings:
-                old_accountings_dict[accounting.user_to] = accounting
+                old_accountings_dict[accounting.userTo] = accounting
 
             # set the old paidPrice to the new_accountings
             for user in new_accountings_dict.keys():
@@ -126,7 +125,7 @@ class TicketService:
                         user
                     ].paidPrice
 
-                    # check if any old accountings no more exists
+            # check if any old accountings no more exists
             # eventually, it creates a new accounting with totalPrice equal to 0 while conserving paidPrice
             for user in old_accountings_dict.keys():
                 if (
@@ -148,7 +147,7 @@ class TicketService:
                 if accounting.totalPrice < accounting.paidPrice:
                     refund_ticket = Ticket()
 
-                    refund_ticket.buyer_id = user
+                    refund_ticket.buyer = user
 
                     refund = Item(
                         name="Refund ticket update",
@@ -158,8 +157,8 @@ class TicketService:
 
                     refund_accounting = Accounting(
                         totalPrice=refund.price,
-                        user_from=user,
-                        user_to=self.user_service.get_logged_user().id,
+                        userFrom=user,
+                        userTo=self.user_service.get_logged_user(),
                     )
 
                     refund_ticket.items.append(refund)
@@ -278,8 +277,8 @@ class AccountingService:
     def get_debt_accountings_of(self, id):
         logged_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter_by(
-            user_from=id, user_to=logged_user.id, paidPrice=0.0
-        ).all()
+            user_from=id, user_to=logged_user.id
+        ).filter(Accounting.paidPrice < Accounting.totalPrice).all()
         for accounting in accountings:
             self._filter_non_owned_items(id, accounting.ticket)
         return accountings
@@ -294,8 +293,8 @@ class AccountingService:
     def get_credit_accountings_of(self, id):
         logged_user = self.user_service.get_logged_user()
         accountings = Accounting.query.filter_by(
-            user_from=logged_user.id, user_to=id, paidPrice=0.0
-        ).all()
+            user_from=logged_user.id, user_to=id
+        ).filter(Accounting.paidPrice < Accounting.totalPrice).all()
         for accounting in accountings:
             self._filter_non_owned_items(id, accounting.ticket)
         return accountings

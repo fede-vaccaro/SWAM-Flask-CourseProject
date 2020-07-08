@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-db = SQLAlchemy(session_options={"autoflush": False})
+db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
 

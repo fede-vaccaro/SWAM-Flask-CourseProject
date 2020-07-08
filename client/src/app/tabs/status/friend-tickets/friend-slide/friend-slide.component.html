@@ -41,8 +41,8 @@
                         </ion-card-header>
 
                         <ion-card-content>
-                            <ion-text color="danger" style="margin-bottom: -30%" *ngIf="debtSelected">Debt: {{ticket.totalPrice.toFixed(2) }}€</ion-text>
-                            <ion-text color="success" style="margin-bottom: -30%" *ngIf="!debtSelected">Credit: {{ticket.totalPrice.toFixed(2) }}€</ion-text><br>
+                            <ion-text color="danger" style="margin-bottom: -30%" *ngIf="debtSelected">Debt: {{(ticket.totalPrice - ticket.paidPrice).toFixed(2) }}€</ion-text>
+                            <ion-text color="success" style="margin-bottom: -30%" *ngIf="!debtSelected">Credit: {{(ticket.totalPrice - ticket.paidPrice).toFixed(2) }}€</ion-text><br>
                             <app-expandable [expanded]="selectedTicketTimestamp === ticket.timestamp">
                                 <ion-button (click)="presentPopover(null, ticket)">{{ debtSelected ? 'Pay ticket' : 'Mark as paid' }} </ion-button>
                                 <ion-grid>

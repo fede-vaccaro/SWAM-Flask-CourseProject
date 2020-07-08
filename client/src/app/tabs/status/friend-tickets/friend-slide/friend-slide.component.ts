@@ -42,9 +42,13 @@ export class FriendSlideComponent implements OnInit {
     }
 
     ngOnInit() {
+        console.log('aa')
         // this.ticketsByFriend = this.ticketService.getTicketBoughtByWithParticipant(this.friend, this.loggedUser);
+        this.ticketsByFriendObs = null
+        this.ticketsByFriend = null
         this.ticketsByFriendObs = this.ticketService.getDebtTicketsOf(this.friend);//TODO getDebtTicketsOf
         this.ticketsByFriendObs.subscribe(tArr => {
+            console.log(tArr)
             this.ticketsByFriend = tArr.reverse();
             this.debt = 0.0;
             this.ticketsByFriend.forEach(t => this.debt += (t.totalPrice - t.paidPrice));
@@ -100,6 +104,7 @@ export class FriendSlideComponent implements OnInit {
             componentProps: {ticket: ticket, friend: this.friend, debtSelected: this.debtSelected, parent: this},
             translucent: true,
         });
+        popover.onDidDismiss().then(()=>this.ngOnInit())
         return await popover.present();
     }
 

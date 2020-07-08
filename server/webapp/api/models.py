@@ -26,12 +26,12 @@ class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.now)
-    
+
     buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
-   
+
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
     items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete')
-    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete')
+    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete, delete-orphan')
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)
@@ -50,11 +50,16 @@ class Accounting(db.Model):
     userTo = db.relationship('User', foreign_keys=user_to)
     userFrom = db.relationship('User', foreign_keys=user_from)
 
+    def __init__(self, **kwargs):
+        super(Accounting, self).__init__(**kwargs)
+        self.paidPrice = 0.0
+
     def __repr__(self):
         return "<Accounting paidPrice: '{}', totalPrice: '{}', userFrom: '{}', userTo: '{}'".format(
             self.paidPrice,
             self.totalPrice, self.userFrom,
             self.userTo)
+
     def __hash__(self):
         return self.__repr__().__hash__()
 
@@ -100,12 +105,13 @@ class Item(db.Model):
             item_dict['quantity'] = self.quantity
         except:
             pass
+
         item_dict['price'] = self.price
-        item_dict['participants'] = [u.username for u in self.participants]
+        item_dict['participants'] = [{'username': u.username} for u in self.participants]
         return item_dict
 
 
 users_items = db.Table('users_items',
-                 db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                 db.Column('items_id', db.Integer, db.ForeignKey('items.id'))
-                 )
+                       db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                       db.Column('items_id', db.Integer, db.ForeignKey('items.id'))
+                       )

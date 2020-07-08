@@ -100,7 +100,7 @@ class TicketService:
                 items
             )
             # remove all previous items and add the new ones
-            Item.query.filter_by(ticket=ticket.id).delete()
+            Item.query.filter_by(ticket=ticket).delete()
             for item in items:
                 ticket.items.append(item)
 
@@ -143,6 +143,8 @@ class TicketService:
                 if accounting.totalPrice < accounting.paidPrice:
                     refund_ticket = Ticket()
 
+                    refund_ticket.buyer_id = user
+
                     refund = Item(
                         name="Refund ticket update",
                         price=accounting.paidPrice - accounting.totalPrice,
@@ -164,7 +166,10 @@ class TicketService:
                     del new_accountings_dict[user]
 
             # remove all the old accountings and add the new ones
-            Accounting.query.filter_by(ticket=ticket.id).delete()
+            # Accounting.query.filter_by(ticket=ticket).delete()
+            for accounting in ticket.accountings:
+                ticket.accountings.remove(accounting)
+
             for user in new_accountings_dict.keys():
                 ticket.accountings.append(new_accountings_dict[user])
 
@@ -221,8 +226,8 @@ class TicketService:
         for participant in accountings.keys():
             new_accounting = Accounting()
 
-            new_accounting.user_from = current_user.id
-            new_accounting.user_to = participant.id
+            new_accounting.userFrom = current_user
+            new_accounting.userTo = participant
             new_accounting.totalPrice = accountings[participant]
 
             if participant != current_user:
@@ -232,15 +237,7 @@ class TicketService:
 
     def get_logged_user_tickets(self):
         current_user = self.user_service.get_logged_user()
-        accountings = Accounting.query.filter_by(user_from=current_user.id).all()
-        ticket_set = set()
-        for accounting in accountings:
-            ticket_set.add(accounting.ticket)
-        tickets = (
-            Ticket.query.filter(Ticket.id.in_(ticket_set))
-                .order_by(Ticket.timestamp.desc())
-                .all()
-        )
+        tickets = Ticket.query.filter_by(buyer=current_user).all()
         return tickets
 
     @transactional

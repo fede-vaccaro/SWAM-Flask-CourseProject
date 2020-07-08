@@ -13,6 +13,7 @@ export class LoggedUserTicketPipe implements PipeTransform {
   transform(dbTickets): Ticket[] {
     let tickets: Ticket[] = []
     dbTickets.forEach(dbTicket => {
+        console.log(dbTicket);
       tickets.push(
         {
           id: dbTicket.id,

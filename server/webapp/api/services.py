@@ -29,22 +29,16 @@ class UserServiceBase:
         logged_user = self.get_logged_user()
 
         # delete all the tickets he has
-        added_tickets = Ticket.query.filter_by(buyer=logged_user).all()
+        Ticket.query.filter_by(buyer_id=logged_user.id).delete()
 
         # delete all the accounting where he is "userTo"
-        accountings = Accounting.query.filter_by(userTo=logged_user).all()
+        Accounting.query.filter_by(user_to=logged_user.id).delete()
 
         # delete himself from being participant
         items = Item.query.filter(Item.participants.any(User.id == logged_user.id)).all()
 
         for item in items:
             item.participants.remove(logged_user)
-
-        for el in added_tickets:
-            db.session.delete(el)
-
-        for el in accountings:
-            db.session.delete(el)
 
         db.session.delete(logged_user)
 
@@ -272,7 +266,7 @@ class AccountingService:
 
     def _filter_non_owned_items(self, user_id, ticket):
         user = User.query.get(user_id)
-        ticket.items = filter(lambda x: user in x.participants, ticket.items)
+        # ticket.items = filter(lambda x: user in x.participants, ticket.items)
 
     def get_debt_accountings_of(self, id):
         logged_user = self.user_service.get_logged_user()

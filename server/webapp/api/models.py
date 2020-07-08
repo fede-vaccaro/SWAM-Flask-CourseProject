@@ -27,12 +27,14 @@ class Ticket(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.now)
 
-    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
+    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='SET NULL'), nullable=False)
 
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
-    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete, delete-orphan')
-    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete, '
-                                                                                         'delete-orphan')
+    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='all, delete-orphan',
+                            passive_deletes=True)
+    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='all, '
+                                                                                         'delete-orphan',
+                                  passive_deletes=True)
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)
@@ -43,7 +45,7 @@ class Accounting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     paidPrice = db.Column(db.Float, default=0.0)
     totalPrice = db.Column(db.Float)
-    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id', ondelete='CASCADE'), nullable=False)
 
     user_from = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     user_to = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
@@ -75,11 +77,12 @@ class Item(db.Model):
     price = db.Column(db.Float(), nullable=False)
     quantity = db.Column(db.Integer(), default=1)
 
-    ticket_id = db.Column(db.Integer(), db.ForeignKey('tickets.id'), nullable=False)
+    ticket_id = db.Column(db.Integer(), db.ForeignKey('tickets.id', ondelete='CASCADE'))
     participants = db.relationship('User',
                                    secondary='users_items',
                                    lazy='select',
-                                   cascade='all, delete'
+                                   cascade='all, delete',
+                                   passive_deletes=True,
                                    # backref=db.backref('items', lazy='select')
                                    )
 
@@ -115,7 +118,7 @@ class Item(db.Model):
 
 items_users = db.Table('users_items',
                        db.Column('id', db.Integer, primary_key=True),
-                       db.Column('items_id', db.Integer, db.ForeignKey('items.id')),
-                       db.Column('users_id', db.Integer, db.ForeignKey('users.id')),
+                       db.Column('items_id', db.Integer, db.ForeignKey('items.id', ondelete='CASCADE')),
+                       db.Column('users_id', db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')),
                        db.UniqueConstraint('items_id', 'users_id', name='UC_items_id_users_id'),
                        )

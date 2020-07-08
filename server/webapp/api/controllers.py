@@ -59,6 +59,10 @@ class UsersAPI(Resource, ServicesAPI):
 
         return new_user, status.HTTP_201_CREATED
 
+    @jwt_required
+    @marshal_with(fields.user_fields)
+    def delete(self):
+        return self.user_service.delete(), status.HTTP_200_OK
 
 class AuthenticationAPI(Resource, ServicesAPI):
     resource_path = '/auth'

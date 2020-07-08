@@ -1,9 +1,9 @@
 import unittest
 from unittest import mock
 
-from webapp import create_app, db, bcrypt
-from webapp.api.models import User, Ticket, Item, Accounting
-from webapp.api.services import UserService, TicketService
+from .. import create_app, db, bcrypt
+from ..api.models import User, Ticket, Item, Accounting
+from ..api.services import UserServiceBase, TicketService
 from . import controllers as ctl
 import json
 
@@ -23,11 +23,12 @@ class FlaskAppTest(unittest.TestCase):
         app = create_app('config.TestConfig')
         self.client = app.test_client()
         db.app = app
+
+        db.drop_all()
         db.create_all()
 
     def tearDown(self):
         db.session.remove()
-        db.drop_all()
 
     @staticmethod
     def _add_user(name='user', password='pw'):
@@ -199,10 +200,12 @@ class TestTicketService(FlaskAppTest):
 class TestUserService(FlaskAppTest):
     password = 'pw'
 
+    user_service = UserServiceBase()
+
     def test_add_user(self):
         name = 'user'
 
-        new_user = UserService.add_user(name, self.password)
+        new_user = self.user_service.add_user(name, self.password)
 
         retrieved_user = User.query.get(new_user.id)
 
@@ -213,20 +216,74 @@ class TestUserService(FlaskAppTest):
     def test_authenticate(self):
         user = self._add_user(password=self.password)
 
-        authenticated_user = UserService.authenticate(user.username, self.password)
+        authenticated_user = self.user_service.authenticate(user.username, self.password)
         self.assertEqual(user, authenticated_user)
 
     def test_authenticate_user_not_found(self):
         self._add_user()
 
-        authenticated_user = UserService.authenticate('not_existent_user', 'pw')
+        authenticated_user = self.user_service.authenticate('not_existent_user', 'pw')
         self.assertIsNone(authenticated_user)
 
     def test_authenticate_wrong_password(self):
         user = self._add_user()
 
-        authenticated_user = UserService.authenticate(user.username, "mistakes")
+        authenticated_user = self.user_service.authenticate(user.username, "mistakes")
         self.assertIsNone(authenticated_user)
+
+    def test_remove_user(self):
+        user = self._add_user(password=self.password)
+        user_2 = self._add_user(name='user2', password='pw')
+
+        # user has a ticket
+        ticket_user = Ticket()
+        ticket_user.buyer = user
+
+        db.session.add(ticket_user)
+
+        # he participate to another ticket
+        ticket_user2 = Ticket()
+        ticket_user2.buyer = user_2
+
+
+        item = Item(price=1.0, quantity=1, name='testItem', ticket=ticket_user2)
+        item.add_participants(user, user_2)
+
+        accounting = Accounting(userFrom=user_2, userTo=user, totalPrice=0.5, ticket=ticket_user2)
+
+        db.session.add(ticket_user2)
+        db.session.commit()
+
+        user_id = user.id
+        user2_id = user_2.id
+        ticket_user_id = ticket_user.id
+        ticket_user2_id = ticket_user2.id
+        accounting_id = accounting.id
+
+        db.session.expunge_all()
+
+
+        def get_logged_user():
+            return user
+
+        # fast mocking
+        db.session.add(user)
+        self.user_service.get_logged_user = get_logged_user
+
+        outcome = self.user_service.delete()
+
+        self.assertIsNone(User.query.get(user_id))
+        self.assertIsNone(Ticket.query.get(ticket_user_id))
+        self.assertIsNotNone(Ticket.query.get(ticket_user2_id))
+        self.assertIsNotNone(Ticket.query.get(user2_id))
+        self.assertIsNone(Accounting.query.get(accounting_id))
+        self.assertTrue(outcome)
+
+        # refresh item
+        db.session.add(item)
+
+        self.assertNotIn(user, item.participants)
+
 
 
 if __name__ == '__main__':

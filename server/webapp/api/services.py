@@ -2,7 +2,6 @@ from flask_jwt_extended import get_jwt_identity
 from injector import inject
 
 from .exceptions import TicketInputError
-from sqlalchemy.exc import SQLAlchemyError
 from .models import User, Item, Ticket, Accounting
 from .. import db
 
@@ -23,6 +22,34 @@ class UserServiceBase:
         if not user.check_password(password):
             return None
         return user
+
+    @transactional
+    def delete(self):
+        logged_user = self.get_logged_user()
+
+        # delete all the tickets he has
+        added_tickets = Ticket.query.filter_by(buyer=logged_user).all()
+
+        # delete all the accounting where he is "userTo"
+        accountings = Accounting.query.filter_by(userTo=logged_user).all()
+
+        # delete himself from being participant
+        items = Item.query.filter(Item.participants.any(User.id == logged_user.id)).all()
+
+        for item in items:
+            item.participants.remove(logged_user)
+
+        for el in added_tickets:
+            db.session.delete(el)
+
+        for el in accountings:
+            db.session.delete(el)
+
+        db.session.delete(logged_user)
+
+        db.session.commit()
+        return True
+
 
     def add_user(self, username, password):
         new_user = User(username=username)

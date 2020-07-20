@@ -27,7 +27,7 @@ class Ticket(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.now)
 
-    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='SET NULL'), nullable=False)
+    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
 
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
     items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='all, delete-orphan',

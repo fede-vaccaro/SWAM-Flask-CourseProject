@@ -264,9 +264,9 @@ class AccountingService:
         logged_user = self.user_service.get_logged_user()
         return Accounting.query.filter_by(user_from=logged_user.id, user_to=logged_user.id).all()
 
-    def _filter_non_owned_items(self, user_id, ticket):
+    def _filter_non_owned_items(self, user_id, ticket: Ticket):
         user = User.query.get(user_id)
-        # ticket.items = filter(lambda x: user in x.participants, ticket.items)
+        ticket.items = ticket.items.filter(Item.participants.any(User.id == user.id))
 
     def get_debt_accountings_of(self, id):
         logged_user = self.user_service.get_logged_user()

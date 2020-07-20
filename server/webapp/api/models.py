@@ -83,7 +83,6 @@ class Item(db.Model):
                                    lazy='select',
                                    cascade='all, delete',
                                    passive_deletes=True,
-                                   # backref=db.backref('items', lazy='select')
                                    )
 
     def add_participants(self, *participants):

@@ -1,13 +1,14 @@
 from flask import jsonify, request
 from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource, marshal_with, reqparse
+from injector import inject
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug import exceptions as exc
 
 from . import fields as fields
 from . import status
 from .models import User, Ticket
-from .services import UserService, TicketService, AccountingService
+from .services import TicketService, AccountingService, UserServiceBase
 from .. import db
 
 
@@ -15,7 +16,17 @@ def noAuth():
     raise exc.BadRequest('Missing authentication header.')
 
 
-class UsersAPI(Resource):
+class ServicesAPI:
+
+    @inject
+    def __init__(self, user_service: UserServiceBase, ticket_service: TicketService,
+                 accounting_service: AccountingService):
+        self.user_service = user_service
+        self.ticket_service = ticket_service
+        self.accounting_service = accounting_service
+
+
+class UsersAPI(Resource, ServicesAPI):
     resource_path = '/users'
 
     @jwt_required
@@ -35,7 +46,7 @@ class UsersAPI(Resource):
         password = args[User.password.key]
 
         try:
-            new_user = UserService.add_user(username, password)
+            new_user = self.user_service.add_user(username, password)
         except SQLAlchemyError as error:
             db.session.rollback()
 
@@ -48,8 +59,12 @@ class UsersAPI(Resource):
 
         return new_user, status.HTTP_201_CREATED
 
+    @jwt_required
+    @marshal_with(fields.user_fields)
+    def delete(self):
+        return self.user_service.delete(), status.HTTP_200_OK
 
-class AuthenticationAPI(Resource):
+class AuthenticationAPI(Resource, ServicesAPI):
     resource_path = '/auth'
 
     def post(self):
@@ -67,7 +82,7 @@ class AuthenticationAPI(Resource):
         username = args[User.username.key]
         password = args[User.password.key]
 
-        user = UserService.authenticate(username, password)
+        user = self.user_service.authenticate(username, password)
         if user:
             access_token = create_access_token(identity=user.id)
             response = jsonify({"token": access_token, "user": user.id, "username": user.username})
@@ -85,7 +100,7 @@ class UserAPI(Resource):
         pass
 
 
-class TicketsAPI(Resource):
+class TicketsAPI(Resource, ServicesAPI):
     resource_path = '/tickets'
 
     @jwt_required
@@ -99,115 +114,110 @@ class TicketsAPI(Resource):
 
         items = args['items']
 
-        try:
-            new_ticket = TicketService.add_ticket(items)
-        except SQLAlchemyError as error:
-            db.session.rollback()
-            error = str(error.orig) + " for parameters" + str(error.params)
-            print("An error occurred with the DB.", error)
-            raise exc.InternalServerError(str(error))
+        new_ticket = self.ticket_service.add_ticket(items)
 
         return new_ticket, status.HTTP_201_CREATED
+
 
     @jwt_required
     @marshal_with(fields.ticket_fields)
     def get(self):
-        tickets = TicketService.get_logged_user_tickets()
+        tickets = self.ticket_service.get_logged_user_tickets()
         return tickets
 
 
-class DebtsAPI(Resource):
+class DebtsAPI(Resource, ServicesAPI):
     resource_path = '/debts'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self):
-        accountings = AccountingService.get_all_debts_accountings()
+        accountings = self.accounting_service.get_all_debts_accountings()
         return accountings
 
 
-class CreditsAPI(Resource):
+class CreditsAPI(Resource, ServicesAPI):
     resource_path = '/credits'
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self):
-        accountings = AccountingService.get_all_credits_accountings()
+        accountings = self.accounting_service.get_all_credits_accountings()
         return accountings
 
-class DebtPaidAPI(Resource):
+
+class DebtPaidAPI(Resource, ServicesAPI):
     resource_path = "/debt-paid"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self):
-        accountings = AccountingService.get_paid_debt_accountings()
+        accountings = self.accounting_service.get_paid_debt_accountings()
         return accountings
 
 
-class DebtAPI(Resource):
+class DebtAPI(Resource, ServicesAPI):
     resource_path = "/debt/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accountings = AccountingService.get_debt_accountings_of(id)
-        print(accountings)
+        accountings = self.accounting_service.get_debt_accountings_of(id)
         return accountings
 
 
-class CreditAPI(Resource):
+class CreditAPI(Resource, ServicesAPI):
     resource_path = "/credit/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accountings = AccountingService.get_credit_accountings_of(id)
+        accountings = self.accounting_service.get_credit_accountings_of(id)
         return accountings
 
 
-class PayDebtAPI(Resource):
+class PayDebtAPI(Resource, ServicesAPI):
     resource_path = "/pay-debt/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accounting = AccountingService.pay_debt_accounting(id)
+        accounting = self.accounting_service.pay_debt_accounting(id)
         return accounting
 
 
-class PayAllDebtsAPI(Resource):
+class PayAllDebtsAPI(Resource, ServicesAPI):
     resource_path = "/pay-debts/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accounting = AccountingService.pay_all_debts_accounting_to(id)
+        accounting = self.accounting_service.pay_all_debts_accounting_to(id)
         return accounting
 
 
-class CreditPaidAPI(Resource):
+class CreditPaidAPI(Resource, ServicesAPI):
     resource_path = "/credit-paid/<int:id>"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self, id):
-        accounting = AccountingService.mark_credit_accounting_paid(id)
+        accounting = self.accounting_service.mark_credit_accounting_paid(id)
         return accounting
 
 
-class MyTicketAPI(Resource):
+class MyTicketAPI(Resource, ServicesAPI):
     resource_path = "/my-ticket"
 
     @jwt_required
     @marshal_with(fields.accounting_fields)
     def get(self):
-        accountings = AccountingService.get_logged_user_yourself_accountings()
+        accountings = self.accounting_service.get_logged_user_yourself_accountings()
         return accountings
 
 
-class TicketAPI(Resource):
-    resource_path = '/tickets/<int:id>'
+class TicketAPI(Resource, ServicesAPI):
+    resource_path = '/ticket/<int:id>'
 
     @marshal_with(fields.ticket_fields)
     @jwt_required
@@ -218,7 +228,7 @@ class TicketAPI(Resource):
             raise exc.NotFound
 
         for accounting in ticket.accountings:
-            user_id = UserService.get_logged_user().id
+            user_id = self.user_service.get_logged_user().id
             if user_id == accounting.user_from or user_id == accounting.user_to:
                 return ticket, status.HTTP_200_OK
         raise exc.Unauthorized
@@ -237,7 +247,7 @@ class TicketAPI(Resource):
 
         items = args['items']
 
-        updated_ticket = TicketService.update_ticket(ticket, items)
+        updated_ticket = self.ticket_service.update_ticket(ticket, items)
         return updated_ticket, status.HTTP_201_CREATED
 
     @jwt_required
@@ -248,8 +258,8 @@ class TicketAPI(Resource):
             raise exc.NotFound
 
         for accounting in ticket.accountings:
-            user_id = UserService.get_logged_user().id
+            user_id = self.user_service.get_logged_user().id
             if user_id == accounting.user_from:
-                TicketService.delete_ticket(ticket)
+                self.ticket_service.delete_ticket(ticket)
                 return status.HTTP_200_OK
         raise exc.Unauthorized

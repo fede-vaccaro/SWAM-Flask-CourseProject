@@ -1,3 +1,5 @@
-curl -X POST -H 'Content-Type: application/json' 127.0.0.1:5000/api/users --data '{"username":"test", "password":"pw"}'
+curl -X POST -H 'Content-Type: application/json' 127.0.0.1:5000/api/users --data '{"username":"fede", "password":"test"}'
 
-curl -X POST -H 'Content-Type: application/json' 127.0.0.1:5000/api/auth -d  '{"username":"test", "password":"pw"}'
+curl -X POST -H 'Content-Type: application/json' 127.0.0.1:5000/api/auth -d  '{"username":"fede", "password":"test"}'
+
+curl -H 'Content-Type: application/json' -H 'Authorization: Bearer ${TOKEN}' 127.0.0.1:5000/api/tickets

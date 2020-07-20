@@ -42,6 +42,5 @@ export class PayticketPopoverComponent{
         // }
         //this.messagesRepositoryService.sendMessageFromLoggedUser(this.friend, content);
         this.parent.popoverController.dismiss()
-        this.parent.ngOnInit()
     }
 }

@@ -47,8 +47,8 @@ accounting_fields = {
 ticket_fields = {
     Ticket.id.key: fields.Integer(),
     Ticket.timestamp.key: fields.DateTime(),
+    'accountings': fields.List(fields.Nested(small_accounting_fields)),
     'items': fields.List(fields.Nested(item_fields)),
-    'accountings': fields.List(fields.Nested(small_accounting_fields))
 }
 
 

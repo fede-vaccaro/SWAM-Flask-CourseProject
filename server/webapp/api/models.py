@@ -26,12 +26,15 @@ class Ticket(db.Model):
     __tablename__ = 'tickets'
     id = db.Column(db.Integer(), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.now)
-    
-    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
-   
+
+    buyer_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='SET NULL'), nullable=False)
+
     buyer = db.relationship('User', backref='tickets', foreign_keys=buyer_id)
-    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='save-update, delete')
-    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='save-update, delete')
+    items = db.relationship('Item', backref='ticket', lazy='dynamic', cascade='all, delete-orphan',
+                            passive_deletes=True)
+    accountings = db.relationship('Accounting', backref='ticket', lazy='select', cascade='all, '
+                                                                                         'delete-orphan',
+                                  passive_deletes=True)
 
     def __repr__(self):
         return "<Ticket '{}'>".format(self.timestamp)
@@ -42,7 +45,7 @@ class Accounting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     paidPrice = db.Column(db.Float, default=0.0)
     totalPrice = db.Column(db.Float)
-    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id'), nullable=False)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.id', ondelete='CASCADE'), nullable=False)
 
     user_from = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
     user_to = db.Column(db.Integer(), db.ForeignKey('users.id'), nullable=False)
@@ -50,11 +53,16 @@ class Accounting(db.Model):
     userTo = db.relationship('User', foreign_keys=user_to)
     userFrom = db.relationship('User', foreign_keys=user_from)
 
+    def __init__(self, **kwargs):
+        super(Accounting, self).__init__(**kwargs)
+        self.paidPrice = 0.0
+
     def __repr__(self):
         return "<Accounting paidPrice: '{}', totalPrice: '{}', userFrom: '{}', userTo: '{}'".format(
             self.paidPrice,
             self.totalPrice, self.userFrom,
             self.userTo)
+
     def __hash__(self):
         return self.__repr__().__hash__()
 
@@ -69,10 +77,12 @@ class Item(db.Model):
     price = db.Column(db.Float(), nullable=False)
     quantity = db.Column(db.Integer(), default=1)
 
-    ticket_id = db.Column(db.Integer(), db.ForeignKey('tickets.id'), nullable=False)
+    ticket_id = db.Column(db.Integer(), db.ForeignKey('tickets.id', ondelete='CASCADE'))
     participants = db.relationship('User',
                                    secondary='users_items',
-                                   lazy='select'
+                                   lazy='select',
+                                   cascade='all, delete',
+                                   passive_deletes=True,
                                    # backref=db.backref('items', lazy='select')
                                    )
 
@@ -100,12 +110,15 @@ class Item(db.Model):
             item_dict['quantity'] = self.quantity
         except:
             pass
+
         item_dict['price'] = self.price
-        item_dict['participants'] = [u.username for u in self.participants]
+        item_dict['participants'] = [{'username': u.username} for u in self.participants]
         return item_dict
 
 
-users_items = db.Table('users_items',
-                 db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                 db.Column('items_id', db.Integer, db.ForeignKey('items.id'))
-                 )
+items_users = db.Table('users_items',
+                       db.Column('id', db.Integer, primary_key=True),
+                       db.Column('items_id', db.Integer, db.ForeignKey('items.id', ondelete='CASCADE')),
+                       db.Column('users_id', db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')),
+                       db.UniqueConstraint('items_id', 'users_id', name='UC_items_id_users_id'),
+                       )

@@ -2,6 +2,8 @@
 A little expense manager which exposes a REST API. 
 The backend is developed with Flask, the frontend with Ionic V5 and Angular.
 
+UI is from [Appichetto](https://github.com/fede-vaccaro/HCI-Project-Appichetto).
+
 ## Installation
 Front-end:
 ```
